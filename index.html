@@ -164,6 +164,11 @@ select.mini { font-family: inherit; font-size: .8rem; padding: 5px 8px; border-r
 .fr-bar input { font-family: inherit; font-size: .85rem; padding: 7px 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); }
 .fr-bar .lbl { font-size: .8rem; color: var(--muted); }
 
+/* Save nudge */
+.save-nudge { display: none; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 12px 0 0; padding: 10px 14px; background: var(--accent-bg); border: 1px solid var(--accent-border); border-radius: 10px; font-size: .85rem; color: var(--text); }
+.save-nudge.show { display: flex; }
+.save-nudge .sn-actions { display: flex; gap: 8px; }
+
 /* Editor */
 .editor { min-height: 46vh; padding: 22px 4px 80px; font-size: 17px; line-height: 1.95; outline: none; color: var(--text); caret-color: var(--accent); }
 .ed-wrap { position: relative; }
@@ -268,6 +273,13 @@ select.mini { font-family: inherit; font-size: .8rem; padding: 5px 8px; border-r
 
 <main class="content">
  <div class="wrap">
+  <div class="save-nudge" id="saveNudge">
+    <span>💾 <span data-i18n="saveNudge"></span></span>
+    <span class="sn-actions">
+      <button class="btn small primary" id="snConfig" data-i18n="saveNudgeConfig"></button>
+      <button class="btn small" id="snIgnore" data-i18n="saveNudgeIgnore"></button>
+    </span>
+  </div>
   <div class="toolbar">
     <div class="tgroup">
       <button class="tool accent" id="tcBtn" data-i18n-title="timecodeTitle"><span class="ico">⏱</span><span data-i18n="timecode"></span></button>
@@ -378,7 +390,7 @@ select.mini { font-family: inherit; font-size: .8rem; padding: 5px 8px; border-r
       <tr><td data-i18n="scRewind"></td><td><kbd>F1</kbd></td></tr>
       <tr><td data-i18n="scForward"></td><td><kbd>F2</kbd></td></tr>
       <tr><td class="sc-section" colspan="2" data-i18n="scEditing"></td></tr>
-      <tr><td data-i18n="scTimecode"></td><td><kbd>⌘</kbd> <kbd>J</kbd></td></tr>
+      <tr><td data-i18n="scTimecode"></td><td><kbd>⌘</kbd> <kbd>J</kbd> · <kbd>@</kbd></td></tr>
       <tr><td data-i18n="scAnnot"></td><td><kbd>#</kbd></td></tr>
       <tr><td data-i18n="scSave"></td><td><kbd>⌘</kbd> <kbd>S</kbd></td></tr>
     </table>
@@ -404,7 +416,7 @@ const I18N = {
     insAnnot:"Annotation", insAnnotTitle:"Insérer une annotation (ou taper #)",
     prev:"Précédent", prevTitle:"Annotation précédente", next:"Suivant", nextTitle:"Annotation suivante",
     replace:"Remplacer", replaceFind:"Remplacer", by:"par", toFind:"texte à remplacer", replacement:"remplacement", nextOne:"Prochain", all:"Tout",
-    speakers:"Interlocuteurs", speakersHintHtml:'— appuie sur <kbd>⌘J</kbd> pour horodater et attribuer',
+    speakers:"Interlocuteurs", speakersHintHtml:'— <kbd>⌘J</kbd> ou <kbd>@</kbd> pour horodater et attribuer',
     namePh:"Nom (ex. Marie Dupont)", rolePh:"Fonction (ex. enquêtée)", interviewer:"Intervieweur", add:"Ajouter",
     speakersEmptyHtml:"Aucun interlocuteur. Ajoute un nom (coche « Intervieweur » pour l'enquêteur). Ensuite <kbd>⌘J</kbd> insère un timecode et te fait choisir qui parle.",
     noSpeaker:"— sans interlocuteur —",
@@ -418,11 +430,12 @@ const I18N = {
     templateName:"Nom du modèle de contexte :", templateSaved:"Modèle enregistré", templateApplied:"Modèle appliqué", templateNone:"Sélectionne d'abord un modèle",
     fillContext:"Remplis le contexte obligatoire (titre, date, retranscrit par) avant d'exporter.",
     createAnnot:"Créer",
-    editorPlaceholder:"Bienvenue dans Rescribe.\n\nPour commencer :\n1 · Ouvrir l'audio ou la vidéo — bouton « Importer média » en bas.\n2 · Importer ou coller la transcription automatique — bouton « Importer texte ».\n3 · Ajouter les interlocuteurs, puis réécouter en corrigeant le texte.\n\n⌘J insère un timecode + l'interlocuteur qui parle · # insère une annotation ([inaudible]…) · Échap met en pause (et recule un peu).",
+    editorPlaceholder:"Bienvenue dans Rescribe.\n\nPour commencer :\n1 · Ouvrir l'audio ou la vidéo — bouton « Importer média » en bas.\n2 · Importer ou coller la transcription automatique — bouton « Importer texte ».\n3 · Ajouter les interlocuteurs, puis réécouter en corrigeant le texte.\n\n⌘J (ou @) insère un timecode + l'interlocuteur qui parle · # insère une annotation ([inaudible]…) · Échap met en pause (et recule un peu).",
     importMedia:"Importer média", importText:"Importer texte", projectFile:"Projet", textFile:"Texte", officeFile:"Word / OpenDocument",
     mediaLoaded:"Média importé : {0} ({1})", textImported:"Texte importé", docError:"Impossible de lire ce fichier", docUnsupported:"Format .doc non supporté — enregistre-le en .docx",
     markdownFile:"Markdown", htmlFile:"HTML", autosave:"Sauvegarde continue…", autosaveTitle:"Choisir un fichier .rescribe.json réécrit automatiquement (toutes les 2 min et à ⌘S). À faire une fois par projet ; différent de « Exporter » qui télécharge un instantané.", export:"Exporter", projectReeditable:"Projet (ré-éditable)",
     dropHere:"Dépose ton fichier audio/vidéo",
+    saveNudge:"Sauvegarde sur disque non configurée — le travail est conservé dans le navigateur en attendant.", saveNudgeConfig:"Configurer", saveNudgeIgnore:"Ignorer",
     helpTitle:"À propos et raccourcis",
     about:"Rescribe est un éditeur local pour reprendre les transcriptions d'entretiens générées par IA. Inspiré d'oTranscribe et repensé pour la relecture : réécoute de l'audio et correction du texte, avec des timecodes cliquables qui attribuent chaque prise de parole à un interlocuteur, un en-tête de contexte réutilisable, et une sauvegarde locale + sur disque. Tout reste dans le navigateur — rien n'est envoyé.",
     repoLink:"Code source et journal des améliorations sur GitHub ↗",
@@ -445,7 +458,7 @@ const I18N = {
     insAnnot:"Annotation", insAnnotTitle:"Insert an annotation (or type #)",
     prev:"Previous", prevTitle:"Previous annotation", next:"Next", nextTitle:"Next annotation",
     replace:"Replace", replaceFind:"Replace", by:"with", toFind:"text to replace", replacement:"replacement", nextOne:"Next", all:"All",
-    speakers:"Speakers", speakersHintHtml:'— press <kbd>⌘J</kbd> to timestamp and attribute',
+    speakers:"Speakers", speakersHintHtml:'— <kbd>⌘J</kbd> or <kbd>@</kbd> to timestamp and attribute',
     namePh:"Name (e.g. Mary Doe)", rolePh:"Role (e.g. respondent)", interviewer:"Interviewer", add:"Add",
     speakersEmptyHtml:"No speakers yet. Add a name (tick “Interviewer” for the interviewer). Then <kbd>⌘J</kbd> inserts a timecode and lets you pick who's speaking.",
     noSpeaker:"— no speaker —",
@@ -459,11 +472,12 @@ const I18N = {
     templateName:"Context template name:", templateSaved:"Template saved", templateApplied:"Template applied", templateNone:"Pick a template first",
     fillContext:"Fill in the required context (title, date, transcribed by) before exporting.",
     createAnnot:"Create",
-    editorPlaceholder:"Welcome to Rescribe.\n\nGetting started:\n1 · Open the audio or video — “Import media” button below.\n2 · Import or paste the automatic transcript — “Import text” button.\n3 · Add the speakers, then replay while fixing the text.\n\n⌘J inserts a timecode + the current speaker · # inserts an annotation ([inaudible]…) · Esc pauses (and rewinds a little).",
+    editorPlaceholder:"Welcome to Rescribe.\n\nGetting started:\n1 · Open the audio or video — “Import media” button below.\n2 · Import or paste the automatic transcript — “Import text” button.\n3 · Add the speakers, then replay while fixing the text.\n\n⌘J (or @) inserts a timecode + the current speaker · # inserts an annotation ([inaudible]…) · Esc pauses (and rewinds a little).",
     importMedia:"Import media", importText:"Import text", projectFile:"Project", textFile:"Text", officeFile:"Word / OpenDocument",
     mediaLoaded:"Media loaded: {0} ({1})", textImported:"Text imported", docError:"Couldn't read this file", docUnsupported:"The old .doc format isn't supported — save it as .docx",
     markdownFile:"Markdown", htmlFile:"HTML", autosave:"Continuous save…", autosaveTitle:"Pick a .rescribe.json file that's rewritten automatically (every 2 min and on ⌘S). Once per project; unlike “Export”, which downloads a one-off snapshot.", export:"Export", projectReeditable:"Project (re-editable)",
     dropHere:"Drop your audio/video file",
+    saveNudge:"Disk save not set up — work is kept in the browser meanwhile.", saveNudgeConfig:"Set up", saveNudgeIgnore:"Dismiss",
     helpTitle:"About & shortcuts",
     about:"Rescribe is a local editor for revisiting AI-generated interview transcripts. Inspired by oTranscribe and rebuilt for the second pass: replay the audio and fix the text, with clickable timecodes that attribute each turn to a speaker, a reusable context header, and local + on-disk saving. Everything stays in the browser — nothing is uploaded.",
     repoLink:"Source code and changelog on GitHub ↗",
@@ -506,7 +520,7 @@ function toggleLang(){ lang = lang === 'fr' ? 'en' : 'fr'; localStorage.setItem(
 /* ============================ État ============================ */
 const LS = { html:'rescribe_html', file:'rescribe_file', speakers:'rescribe_speakers', settings:'rescribe_settings', meta:'rescribe_meta', templates:'rescribe_templates' };
 const SPK_COLORS = ['#6366f1','#0d9488','#db2777','#ea580c','#0891b2','#65a30d','#9333ea','#dc2626'];
-const state = { player:null, fileName:'', speakers:[], dirty:false, fileHandle:null, autosaveTimer:null, mediaURL:null,
+const state = { player:null, fileName:'', speakers:[], dirty:false, fileHandle:null, autosaveTimer:null, mediaURL:null, saveNudgeHidden:false,
   meta:{ studyTitle:'', location:'', date:'', transcribedBy:'', custom:[] }, settings:{ step:5, rewindOnPause:1, autosaveMin:2, fontSize:17 } };
 const $ = id => document.getElementById(id);
 const editor = $('editor');
@@ -535,7 +549,8 @@ function loadMedia(file) {
 const onMeta = () => { const d = state.player.duration;
   $('durTime').textContent = fmt(d);
   [0,1,2,3,4].forEach(i=>{ $('q'+i).textContent=fmt(d*i/4); });
-  enableTransport(true); updateProgress(); renderCtxAuto(); flash(t('mediaLoaded', state.fileName, fmt(d))); };
+  enableTransport(true); updateProgress(); renderCtxAuto(); flash(t('mediaLoaded', state.fileName, fmt(d))); maybeShowSaveNudge(); };
+function maybeShowSaveNudge(){ $('saveNudge').classList.toggle('show', HAS_FS && !state.fileHandle && !state.saveNudgeHidden && !!(state.player && state.player.src)); }
 const onTime = () => updateProgress();
 const onPlay = () => $('playBtn').textContent = '❚❚';
 const onPause = () => $('playBtn').textContent = '▶';
@@ -566,7 +581,17 @@ function changeFont(d){ state.settings.fontSize = clamp(state.settings.fontSize 
 /* ============================ Insertions ============================ */
 function getRange(){ const sel=window.getSelection(); if(sel.rangeCount&&editor.contains(sel.anchorNode)) return sel.getRangeAt(0);
   const r=document.createRange(); r.selectNodeContents(editor); r.collapse(false); return r; }
-function caretRect(){ const r=getRange(); let rect=r.getBoundingClientRect(); if(!rect || (!rect.width&&!rect.height&&!rect.top)) rect=$('tcBtn').getBoundingClientRect(); return rect; }
+function caretRect(){
+  const sel=window.getSelection(); let range;
+  if(sel.rangeCount && editor.contains(sel.anchorNode)) range=sel.getRangeAt(0);
+  else { range=document.createRange(); range.selectNodeContents(editor); range.collapse(false); }
+  let rect=range.getBoundingClientRect();
+  if(rect && rect.height>0) return rect;
+  const m=document.createElement('span'); m.textContent='​'; m.style.cssText='display:inline-block;width:0;height:1em';
+  const r=range.cloneRange(); r.collapse(true); r.insertNode(m);
+  rect=m.getBoundingClientRect(); const p=m.parentNode; if(p) p.removeChild(m);
+  return (rect && rect.height>0) ? rect : editor.getBoundingClientRect();
+}
 function insertNodeAtCaret(node, addSpace){ const range=getRange(); range.deleteContents(); range.insertNode(node);
   if(addSpace){ const sp=document.createTextNode(' '); node.after(sp); range.setStartAfter(sp); } else range.setStartAfter(node);
   range.collapse(true); const sel=window.getSelection(); sel.removeAllRanges(); sel.addRange(range); onEditorChanged(); }
@@ -587,12 +612,38 @@ function timecodeFlow(){
 editor.addEventListener('click', e => { const tc=e.target.closest('.tc'); if(tc&&state.player){ const turn=tc.closest('.turn'); const ti=turn?turn.dataset.t:tc.dataset.t; if(ti!=null){ state.player.currentTime=parseFloat(ti); if(state.player.paused) state.player.play(); } } });
 editor.addEventListener('paste', e => {
   e.preventDefault();
-  const text = (e.clipboardData || window.clipboardData).getData('text/plain');
-  const frag = document.createDocumentFragment();
-  text.split(/\r?\n/).forEach((line, i) => { if(i) frag.appendChild(document.createElement('br')); frag.appendChild(document.createTextNode(line)); });
+  const cd = e.clipboardData || window.clipboardData;
+  const html = cd.getData('text/html');
+  let frag;
+  if(html && /class=["']?(turn|tc)/.test(html)){ const tmp=document.createElement('div'); tmp.innerHTML=html; frag=cleanPastedFrag(tmp); }
+  else { const text=cd.getData('text/plain'); frag=document.createDocumentFragment();
+    text.split(/\r?\n/).forEach((line, i) => { if(i) frag.appendChild(document.createElement('br')); frag.appendChild(document.createTextNode(line)); }); }
   const range = getRange(); range.deleteContents(); range.insertNode(frag); range.collapse(false);
   const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range); onEditorChanged();
 });
+function cleanPastedFrag(root){
+  const frag=document.createDocumentFragment();
+  (function rec(parent, out){
+    parent.childNodes.forEach(node=>{
+      if(node.nodeType===Node.TEXT_NODE){ out.appendChild(document.createTextNode(node.nodeValue)); return; }
+      if(node.nodeType!==Node.ELEMENT_NODE) return;
+      const el=node, tag=el.tagName;
+      if(el.classList && el.classList.contains('turn')){
+        const turn=document.createElement('span'); turn.className='turn'; turn.contentEditable='false';
+        if(el.dataset.t) turn.dataset.t=el.dataset.t; if(el.dataset.spk) turn.dataset.spk=el.dataset.spk;
+        const tc=el.querySelector('.tc'), sp=el.querySelector('.turn-spk');
+        if(tc){ const x=document.createElement('span'); x.className='tc'; x.textContent=tc.textContent; x.title='→ '+tc.textContent; turn.appendChild(x); }
+        if(sp){ const x=document.createElement('span'); x.className='turn-spk'; if(sp.style&&sp.style.color) x.style.color=sp.style.color; x.textContent=sp.textContent; turn.appendChild(x); }
+        out.appendChild(turn); return;
+      }
+      if(el.classList && el.classList.contains('tc')){ const x=document.createElement('span'); x.className='tc'; x.textContent=el.textContent; x.title='→ '+el.textContent; out.appendChild(x); return; }
+      if(tag==='BR'){ out.appendChild(document.createElement('br')); return; }
+      rec(el, out);
+      if(/^(DIV|P|LI|H[1-6]|TR)$/.test(tag)) out.appendChild(document.createElement('br'));
+    });
+  })(root, frag);
+  return frag;
+}
 
 /* ============================ Annotations à compléter ============================ */
 function countPlaceholders(){ const txt=editor.innerText||''; let n=0; allTags().forEach(tok=>{let i=0;while((i=txt.indexOf(tok,i))!==-1){n++;i+=tok.length;}});
@@ -729,10 +780,14 @@ function deleteTemplate(){ const id=$('tplSelect').value; if(!id){ flash(t('temp
 
 /* ============================ Sauvegarde ============================ */
 function togglePlaceholder(){ const empty = editor.children.length===0 && (editor.textContent||'').trim()===''; $('editorPh').classList.toggle('hide', !empty); }
-function markDirty(){ state.dirty=true; $('saveDot').className='save-dot dirty'; $('saveText').textContent=t('modifying'); }
 let saveDebounce=null;
-function onEditorChanged(){ togglePlaceholder(); markDirty(); countPlaceholders(); clearTimeout(saveDebounce);
-  saveDebounce=setTimeout(()=>{ localStorage.setItem(LS.html,editor.innerHTML); persistMeta(); $('saveDot').className='save-dot saved'; $('saveText').textContent=t('savedLocal'); },700); }
+function scheduleSave(){ clearTimeout(saveDebounce); saveDebounce=setTimeout(async ()=>{
+  localStorage.setItem(LS.html,editor.innerHTML); persistMeta();
+  if(state.fileHandle){ await writeToDisk(); }
+  else { $('saveDot').className='save-dot saved'; $('saveText').textContent=t('savedLocal'); }
+}, 700); }
+function markDirty(){ state.dirty=true; $('saveDot').className='save-dot dirty'; $('saveText').textContent=t('modifying'); scheduleSave(); }
+function onEditorChanged(){ togglePlaceholder(); countPlaceholders(); markDirty(); }
 function persistMeta(){ localStorage.setItem(LS.file,state.fileName); localStorage.setItem(LS.speakers,JSON.stringify(state.speakers));
   localStorage.setItem(LS.settings,JSON.stringify(state.settings)); localStorage.setItem(LS.meta,JSON.stringify(state.meta)); }
 function serializeProject(){ return { format:'rescribe', version:VERSION, savedAt:new Date().toISOString(), fileName:state.fileName, meta:state.meta, speakers:state.speakers, settings:state.settings, html:editor.innerHTML }; }
@@ -747,7 +802,7 @@ function loadProject(data){ if(data.html!=null){ editor.innerHTML=data.html; reb
 const HAS_FS='showSaveFilePicker' in window;
 async function connectSaveFile(){ if(!HAS_FS){ flash(t('fsUnsupported')); return; }
   try{ state.fileHandle=await window.showSaveFilePicker({ suggestedName:(state.fileName.replace(/\.[^.]+$/,'')||'transcript')+'.rescribe.json', types:[{description:'Rescribe project',accept:{'application/json':['.json']}}] });
-    await writeToDisk(); startAutosaveTimer(); $('connectFileBtn').innerHTML='💾 ✓ '+state.settings.autosaveMin+' min'; $('connectFileBtn').classList.add('primary'); flash(t('fsEnabled',state.settings.autosaveMin));
+    await writeToDisk(); startAutosaveTimer(); $('connectFileBtn').innerHTML='💾 ✓ '+state.settings.autosaveMin+' min'; $('connectFileBtn').classList.add('primary'); flash(t('fsEnabled',state.settings.autosaveMin)); maybeShowSaveNudge();
   }catch(e){} }
 async function writeToDisk(){ if(!state.fileHandle) return false;
   try{ const w=await state.fileHandle.createWritable(); await w.write(JSON.stringify(serializeProject(),null,2)); await w.close();
@@ -791,14 +846,15 @@ function doExport(kind){
 
 /* ============================ Import ============================ */
 const IMPORT_ACCEPT={ project:'.json,.otr,.rescribe.json', text:'.txt', markdown:'.md,.markdown', html:'.html,.htm', office:'.docx,.odt,.doc' };
-function setEditorText(text){ editor.innerHTML=text.split('\n').map(l=>'<div>'+(escapeHtml(l)||'&#8203;')+'</div>').join(''); onEditorChanged(); }
+function appendEditorHtml(html){ if((editor.textContent||'').trim()!=='') editor.insertAdjacentHTML('beforeend','<div><br></div>'); editor.insertAdjacentHTML('beforeend', html); rebindAfterLoad(); onEditorChanged(); }
+function setEditorText(text){ appendEditorHtml(text.split('\n').map(l=>'<div>'+(escapeHtml(l)||'&#8203;')+'</div>').join('')); }
 function importText(kind){ const inp=$('textInput'); inp.accept=IMPORT_ACCEPT[kind]||'';
   inp.onchange=()=>{ const file=inp.files[0]; inp.value=''; if(!file) return;
     if(kind==='office'){ importOffice(file); return; }
     const reader=new FileReader();
     reader.onload=()=>{ const content=reader.result;
       if(kind==='project'){ try{ loadProject(JSON.parse(content)); flash(t('projImported')); }catch(e){ flash(t('projInvalid')); } }
-      else if(kind==='html'){ editor.innerHTML=content; onEditorChanged(); rebindAfterLoad(); }
+      else if(kind==='html'){ appendEditorHtml(content); flash(t('textImported')); }
       else { setEditorText(content); flash(t('textImported')); } };
     reader.readAsText(file); };
   inp.click(); }
@@ -874,6 +930,9 @@ $('tplSelect').onchange=()=>{ if($('tplSelect').value) applyTemplate($('tplSelec
 $('openMediaBtn').onclick=()=>$('mediaInput').click();
 $('mediaInput').onchange=e=>{ if(e.target.files[0]) loadMedia(e.target.files[0]); e.target.value=''; };
 $('connectFileBtn').onclick=connectSaveFile;
+$('snConfig').onclick=async ()=>{ await connectSaveFile(); maybeShowSaveNudge(); };
+$('snIgnore').onclick=()=>{ state.saveNudgeHidden=true; maybeShowSaveNudge(); };
+editor.addEventListener('keydown',e=>{ if(e.key==='@' && !e.metaKey && state.player){ e.preventDefault(); timecodeFlow(); } });
 editor.addEventListener('input',()=>{ onEditorChanged(); maybeShowAnnot(); });
 editor.addEventListener('keyup',e=>{ if(spkPop.classList.contains('show')) return; if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)) maybeShowAnnot(); });
 editor.addEventListener('blur',()=>setTimeout(hidePop,150));

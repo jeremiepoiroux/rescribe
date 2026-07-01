@@ -79,9 +79,13 @@ The service worker is **network-first for the app shell**, so a redeploy is pick
 ## Changelog
 
 ### v1.0.0
+- Typing `@` is now an alias for ⌘J (timecode + speaker).
+- Imports **append** below existing text instead of replacing it.
+- Copy-paste now **preserves timecoded turns** (internal paste keeps the `[mm:ss]` markers; external rich paste stays plain).
+- Continuous save writes **on every change** (near-instant) once a file is linked; speaker popup now anchors under the caret.
 - **Word / OpenDocument import** (`.docx`, `.odt`) — unzipped and text-extracted locally in the browser.
 - Media-import confirmation toast; talk-time **statistics moved into the Help panel**.
-- Clearer **"Continuous save…"** label (auto-save to a linked file) vs the one-off project export.
+- Clearer **"Continuous save…"** label (auto-save to a linked file) vs the one-off project export, plus a one-time, dismissible prompt to set it up when media is loaded (Chromium only).
 - **Custom annotations**: type `#word` and pick "Create [word]" to add your own annotation tags (remembered for next time).
 - Welcome/tutorial text in the empty editor.
 - Removed the raw-minute labels under the progress bar.
