@@ -50,6 +50,7 @@ Anything the browser can decode: `.mp3`, `.wav`, `.m4a`, `.aac`, `.ogg`, `.opus`
 ### Importable text / project
 - `.rescribe.json` — **full project**: text, speakers, context, settings (re-editable identically).
 - `.txt`, `.md` — plain text into the editor.
+- `.docx`, `.odt` — Word / OpenDocument, text extracted locally (unzipped in-browser, nothing uploaded). The old binary `.doc` isn't supported — save it as `.docx`.
 - `.html` — HTML content (turns/timecodes preserved if it came from a Rescribe export).
 
 ### Exports
@@ -78,6 +79,9 @@ The service worker is **network-first for the app shell**, so a redeploy is pick
 ## Changelog
 
 ### v1.0.0
+- **Word / OpenDocument import** (`.docx`, `.odt`) — unzipped and text-extracted locally in the browser.
+- Media-import confirmation toast; talk-time **statistics moved into the Help panel**.
+- Clearer **"Continuous save…"** label (auto-save to a linked file) vs the one-off project export.
 - **Custom annotations**: type `#word` and pick "Create [word]" to add your own annotation tags (remembered for next time).
 - Welcome/tutorial text in the empty editor.
 - Removed the raw-minute labels under the progress bar.

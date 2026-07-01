@@ -240,7 +240,7 @@ select.mini { font-family: inherit; font-size: .8rem; padding: 5px 8px; border-r
     <button class="tp-btn primary" id="playBtn" data-i18n-title="playpause" disabled>▶</button>
     <button class="tp-btn" id="fwdBtn" data-i18n-title="forward" disabled>»</button>
     <button class="tp-btn toggle" id="videoToggle" data-i18n-title="toggleVideo"><span>🎬</span><span data-i18n="video"></span></button>
-    <div class="time"><b id="curTime">0:00</b> / <span id="durTime">0:00</span> <span class="pct" id="pctTime">0%</span> <span class="mins" id="durMins"></span></div>
+    <div class="time"><b id="curTime">0:00</b> / <span id="durTime">0:00</span> <span class="pct" id="pctTime">0%</span></div>
     <div class="spacer"></div>
     <div class="ctl-group"><label for="stepSel" data-i18n="skip"></label>
       <select class="mini" id="stepSel"><option value="2">2 s</option><option value="5" selected>5 s</option><option value="10">10 s</option></select></div>
@@ -327,11 +327,6 @@ select.mini { font-family: inherit; font-size: .8rem; padding: 5px 8px; border-r
     </div>
   </div>
 
-  <div class="panel collapsed" id="statsPanel">
-    <div class="panel-head" id="statsHead"><h3><span id="statsCaret">▸</span> <span data-i18n="stats"></span> <span class="hint" data-i18n="statsHint"></span></h3></div>
-    <div class="panel-body"><div id="statsBody"></div></div>
-  </div>
-
   <div class="ed-wrap">
     <div class="editor" id="editor" contenteditable="true" spellcheck="true" role="textbox" aria-multiline="true"></div>
     <div class="ed-ph" id="editorPh"></div>
@@ -347,12 +342,13 @@ select.mini { font-family: inherit; font-size: .8rem; padding: 5px 8px; border-r
      <div class="dd-menu">
        <button class="dd-item" data-import="project"><span data-i18n="projectFile"></span> <small>.rescribe.json</small></button>
        <button class="dd-item" data-import="text"><span data-i18n="textFile"></span> <small>.txt</small></button>
+       <button class="dd-item" data-import="office"><span data-i18n="officeFile"></span> <small>.docx .odt</small></button>
        <button class="dd-item" data-import="markdown"><span data-i18n="markdownFile"></span> <small>.md</small></button>
        <button class="dd-item" data-import="html"><span data-i18n="htmlFile"></span> <small>.html</small></button>
      </div>
    </div>
    <div class="spacer"></div>
-   <button class="btn" id="connectFileBtn">💾 <span data-i18n="autosave"></span></button>
+   <button class="btn" id="connectFileBtn" data-i18n-title="autosaveTitle">💾 <span data-i18n="autosave"></span></button>
    <div class="dd" id="exportDd">
      <button class="btn primary" id="exportBtn">⤓ <span data-i18n="export"></span> ▾</button>
      <div class="dd-menu up-right">
@@ -386,6 +382,8 @@ select.mini { font-family: inherit; font-size: .8rem; padding: 5px 8px; border-r
       <tr><td data-i18n="scAnnot"></td><td><kbd>#</kbd></td></tr>
       <tr><td data-i18n="scSave"></td><td><kbd>⌘</kbd> <kbd>S</kbd></td></tr>
     </table>
+    <p class="sub" style="margin:18px 0 6px;color:var(--text);font-weight:500"><span data-i18n="stats"></span> <span class="hint" style="font-weight:400;color:var(--faint)" data-i18n="statsHint"></span></p>
+    <div id="statsBody"></div>
     <p class="credit" id="versionLine"></p>
   </div>
 </div>
@@ -412,7 +410,7 @@ const I18N = {
     noSpeaker:"— sans interlocuteur —",
     stats:"Statistiques", statsHint:"— temps de parole par interlocuteur", statsEmpty:"Pose des timecodes (⌘J) en attribuant les interlocuteurs pour voir les temps de parole.",
     context:"Contexte", contextHint:"— obligatoire, apparaît en en-tête des exports",
-    studyTitle:"Titre de l'étude", location:"Lieu / visio", date:"Date", datePh:"ex. 12 mars 2026", transcribedBy:"Retranscrit par",
+    studyTitle:"Titre de l'étude", location:"Lieu / visio", date:"Date de l'entretien", datePh:"ex. 12 mars 2026", transcribedBy:"Retranscrit par",
     addField:"Ajouter un champ", fieldLabel:"Intitulé", fieldValue:"Valeur",
     duration:"Durée",
     autoIncluded:"Ajoutés automatiquement", autoIncludedEmpty:"Les interlocuteurs et la durée seront ajoutés à l'en-tête.",
@@ -420,9 +418,10 @@ const I18N = {
     templateName:"Nom du modèle de contexte :", templateSaved:"Modèle enregistré", templateApplied:"Modèle appliqué", templateNone:"Sélectionne d'abord un modèle",
     fillContext:"Remplis le contexte obligatoire (titre, date, retranscrit par) avant d'exporter.",
     createAnnot:"Créer",
-    editorPlaceholder:"Bienvenue dans Rescribe.\n\nPour commencer :\n1 · Ouvre l'audio ou la vidéo — bouton « Importer média » en bas.\n2 · Importe ou colle ta transcription automatique — bouton « Importer texte ».\n3 · Ajoute tes interlocuteurs, puis réécoute en corrigeant le texte.\n\n⌘J insère un timecode + l'interlocuteur qui parle · tape # pour une annotation ([inaudible]…) · Échap met en pause (et recule un peu).",
-    importMedia:"Importer média", importText:"Importer texte", projectFile:"Projet", textFile:"Texte",
-    markdownFile:"Markdown", htmlFile:"HTML", autosave:"Auto-sauvegarde…", export:"Exporter", projectReeditable:"Projet (ré-éditable)",
+    editorPlaceholder:"Bienvenue dans Rescribe.\n\nPour commencer :\n1 · Ouvrir l'audio ou la vidéo — bouton « Importer média » en bas.\n2 · Importer ou coller la transcription automatique — bouton « Importer texte ».\n3 · Ajouter les interlocuteurs, puis réécouter en corrigeant le texte.\n\n⌘J insère un timecode + l'interlocuteur qui parle · # insère une annotation ([inaudible]…) · Échap met en pause (et recule un peu).",
+    importMedia:"Importer média", importText:"Importer texte", projectFile:"Projet", textFile:"Texte", officeFile:"Word / OpenDocument",
+    mediaLoaded:"Média importé : {0} ({1})", textImported:"Texte importé", docError:"Impossible de lire ce fichier", docUnsupported:"Format .doc non supporté — enregistre-le en .docx",
+    markdownFile:"Markdown", htmlFile:"HTML", autosave:"Sauvegarde continue…", autosaveTitle:"Choisir un fichier .rescribe.json réécrit automatiquement (toutes les 2 min et à ⌘S). À faire une fois par projet ; différent de « Exporter » qui télécharge un instantané.", export:"Exporter", projectReeditable:"Projet (ré-éditable)",
     dropHere:"Dépose ton fichier audio/vidéo",
     helpTitle:"À propos et raccourcis",
     about:"Rescribe est un éditeur local pour reprendre les transcriptions d'entretiens générées par IA. Inspiré d'oTranscribe et repensé pour la relecture : réécoute de l'audio et correction du texte, avec des timecodes cliquables qui attribuent chaque prise de parole à un interlocuteur, un en-tête de contexte réutilisable, et une sauvegarde locale + sur disque. Tout reste dans le navigateur — rien n'est envoyé.",
@@ -452,7 +451,7 @@ const I18N = {
     noSpeaker:"— no speaker —",
     stats:"Statistics", statsHint:"— talk time per speaker", statsEmpty:"Add timecodes (⌘J) attributing speakers to see talk time.",
     context:"Context", contextHint:"— required, shown in the export header",
-    studyTitle:"Study title", location:"Location / call", date:"Date", datePh:"e.g. March 12, 2026", transcribedBy:"Transcribed by",
+    studyTitle:"Study title", location:"Location / call", date:"Interview date", datePh:"e.g. March 12, 2026", transcribedBy:"Transcribed by",
     addField:"Add a field", fieldLabel:"Label", fieldValue:"Value",
     duration:"Duration",
     autoIncluded:"Added automatically", autoIncludedEmpty:"Speakers and duration will be added to the header.",
@@ -460,9 +459,10 @@ const I18N = {
     templateName:"Context template name:", templateSaved:"Template saved", templateApplied:"Template applied", templateNone:"Pick a template first",
     fillContext:"Fill in the required context (title, date, transcribed by) before exporting.",
     createAnnot:"Create",
-    editorPlaceholder:"Welcome to Rescribe.\n\nTo get started:\n1 · Open the audio or video — “Import media” button below.\n2 · Import or paste your automatic transcript — “Import text” button.\n3 · Add your speakers, then replay while fixing the text.\n\n⌘J inserts a timecode + the current speaker · type # for an annotation ([inaudible]…) · Esc pauses (and rewinds a little).",
-    importMedia:"Import media", importText:"Import text", projectFile:"Project", textFile:"Text",
-    markdownFile:"Markdown", htmlFile:"HTML", autosave:"Auto-save…", export:"Export", projectReeditable:"Project (re-editable)",
+    editorPlaceholder:"Welcome to Rescribe.\n\nGetting started:\n1 · Open the audio or video — “Import media” button below.\n2 · Import or paste the automatic transcript — “Import text” button.\n3 · Add the speakers, then replay while fixing the text.\n\n⌘J inserts a timecode + the current speaker · # inserts an annotation ([inaudible]…) · Esc pauses (and rewinds a little).",
+    importMedia:"Import media", importText:"Import text", projectFile:"Project", textFile:"Text", officeFile:"Word / OpenDocument",
+    mediaLoaded:"Media loaded: {0} ({1})", textImported:"Text imported", docError:"Couldn't read this file", docUnsupported:"The old .doc format isn't supported — save it as .docx",
+    markdownFile:"Markdown", htmlFile:"HTML", autosave:"Continuous save…", autosaveTitle:"Pick a .rescribe.json file that's rewritten automatically (every 2 min and on ⌘S). Once per project; unlike “Export”, which downloads a one-off snapshot.", export:"Export", projectReeditable:"Project (re-editable)",
     dropHere:"Drop your audio/video file",
     helpTitle:"About & shortcuts",
     about:"Rescribe is a local editor for revisiting AI-generated interview transcripts. Inspired by oTranscribe and rebuilt for the second pass: replay the audio and fix the text, with clickable timecodes that attribute each turn to a speaker, a reusable context header, and local + on-disk saving. Everything stays in the browser — nothing is uploaded.",
@@ -500,7 +500,6 @@ function applyI18n() {
   if (!state.fileName) $('fileMeta').textContent = t('noMedia');
   else $('fileMeta').textContent = (state.player && state.player.src) ? state.fileName : state.fileName + ' ' + t('reloadHint');
   renderSpeakers(); renderCtxAuto(); countPlaceholders();
-  if(!$('statsPanel').classList.contains('collapsed')) renderStats();
 }
 function toggleLang(){ lang = lang === 'fr' ? 'en' : 'fr'; localStorage.setItem('rescribe_lang', lang); applyI18n(); }
 
@@ -534,9 +533,9 @@ function loadMedia(file) {
   state.player.addEventListener('error', () => { $('fileMeta').textContent = '⚠︎ ' + file.name; }, { once:true });
 }
 const onMeta = () => { const d = state.player.duration;
-  $('durTime').textContent = fmt(d); $('durMins').textContent = '· '+mins(d);
+  $('durTime').textContent = fmt(d);
   [0,1,2,3,4].forEach(i=>{ $('q'+i).textContent=fmt(d*i/4); });
-  enableTransport(true); updateProgress(); renderCtxAuto(); };
+  enableTransport(true); updateProgress(); renderCtxAuto(); flash(t('mediaLoaded', state.fileName, fmt(d))); };
 const onTime = () => updateProgress();
 const onPlay = () => $('playBtn').textContent = '❚❚';
 const onPause = () => $('playBtn').textContent = '▶';
@@ -733,8 +732,7 @@ function togglePlaceholder(){ const empty = editor.children.length===0 && (edito
 function markDirty(){ state.dirty=true; $('saveDot').className='save-dot dirty'; $('saveText').textContent=t('modifying'); }
 let saveDebounce=null;
 function onEditorChanged(){ togglePlaceholder(); markDirty(); countPlaceholders(); clearTimeout(saveDebounce);
-  saveDebounce=setTimeout(()=>{ localStorage.setItem(LS.html,editor.innerHTML); persistMeta(); $('saveDot').className='save-dot saved'; $('saveText').textContent=t('savedLocal');
-    if(!$('statsPanel').classList.contains('collapsed')) renderStats(); },700); }
+  saveDebounce=setTimeout(()=>{ localStorage.setItem(LS.html,editor.innerHTML); persistMeta(); $('saveDot').className='save-dot saved'; $('saveText').textContent=t('savedLocal'); },700); }
 function persistMeta(){ localStorage.setItem(LS.file,state.fileName); localStorage.setItem(LS.speakers,JSON.stringify(state.speakers));
   localStorage.setItem(LS.settings,JSON.stringify(state.settings)); localStorage.setItem(LS.meta,JSON.stringify(state.meta)); }
 function serializeProject(){ return { format:'rescribe', version:VERSION, savedAt:new Date().toISOString(), fileName:state.fileName, meta:state.meta, speakers:state.speakers, settings:state.settings, html:editor.innerHTML }; }
@@ -792,14 +790,46 @@ function doExport(kind){
   if(kind==='otr') download(base+'.rescribe.json',JSON.stringify(serializeProject(),null,2),'application/json'); }
 
 /* ============================ Import ============================ */
-function importText(kind){ const inp=$('textInput');
-  inp.onchange=()=>{ const file=inp.files[0]; if(!file) return; const reader=new FileReader();
+const IMPORT_ACCEPT={ project:'.json,.otr,.rescribe.json', text:'.txt', markdown:'.md,.markdown', html:'.html,.htm', office:'.docx,.odt,.doc' };
+function setEditorText(text){ editor.innerHTML=text.split('\n').map(l=>'<div>'+(escapeHtml(l)||'&#8203;')+'</div>').join(''); onEditorChanged(); }
+function importText(kind){ const inp=$('textInput'); inp.accept=IMPORT_ACCEPT[kind]||'';
+  inp.onchange=()=>{ const file=inp.files[0]; inp.value=''; if(!file) return;
+    if(kind==='office'){ importOffice(file); return; }
+    const reader=new FileReader();
     reader.onload=()=>{ const content=reader.result;
       if(kind==='project'){ try{ loadProject(JSON.parse(content)); flash(t('projImported')); }catch(e){ flash(t('projInvalid')); } }
       else if(kind==='html'){ editor.innerHTML=content; onEditorChanged(); rebindAfterLoad(); }
-      else { editor.innerHTML=content.split('\n').map(l=>'<div>'+(escapeHtml(l)||'&#8203;')+'</div>').join(''); onEditorChanged(); } };
-    reader.readAsText(file); inp.value=''; };
+      else { setEditorText(content); flash(t('textImported')); } };
+    reader.readAsText(file); };
   inp.click(); }
+async function importOffice(file){ const name=file.name.toLowerCase();
+  try{ let text;
+    if(name.endsWith('.docx')) text=officeXmlToText(await zipEntryText(file,'word/document.xml'), /<w:tab\/>/g, /<\/w:p>/g);
+    else if(name.endsWith('.odt')) text=officeXmlToText(await zipEntryText(file,'content.xml'), /<text:tab\/>/g, /<\/text:(?:p|h)>/g);
+    else { flash(t('docUnsupported')); return; }
+    setEditorText(text); flash(t('textImported'));
+  }catch(e){ console.warn(e); flash(t('docError')); } }
+function officeXmlToText(xml, tabRe, paraRe){ return xml.replace(tabRe,'\t').replace(paraRe,'\n').replace(/<[^>]+>/g,'')
+  .replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;|&apos;/g,"'")
+  .replace(/[ \t]+\n/g,'\n').replace(/\n{3,}/g,'\n\n').trim(); }
+async function zipEntryText(file, entryName){
+  const buf=new Uint8Array(await file.arrayBuffer()); const dv=new DataView(buf.buffer);
+  let eocd=-1; for(let i=buf.length-22;i>=0;i--){ if(dv.getUint32(i,true)===0x06054b50){ eocd=i; break; } }
+  if(eocd<0) throw new Error('not a zip');
+  const count=dv.getUint16(eocd+10,true); let off=dv.getUint32(eocd+16,true); const dec=new TextDecoder(); let entry=null;
+  for(let i=0;i<count && off+46<=buf.length;i++){ if(dv.getUint32(off,true)!==0x02014b50) break;
+    const method=dv.getUint16(off+10,true), compSize=dv.getUint32(off+20,true), nameLen=dv.getUint16(off+28,true), extraLen=dv.getUint16(off+30,true), commentLen=dv.getUint16(off+32,true), localOff=dv.getUint32(off+42,true);
+    const nm=dec.decode(buf.subarray(off+46,off+46+nameLen));
+    if(nm===entryName){ entry={method,compSize,localOff}; break; }
+    off+=46+nameLen+extraLen+commentLen; }
+  if(!entry) throw new Error('entry not found');
+  const lNameLen=dv.getUint16(entry.localOff+26,true), lExtraLen=dv.getUint16(entry.localOff+28,true);
+  const start=entry.localOff+30+lNameLen+lExtraLen; const comp=buf.subarray(start, start+entry.compSize);
+  let bytes;
+  if(entry.method===0){ bytes=comp; }
+  else { const ds=new DecompressionStream('deflate-raw'); const stream=new Blob([comp]).stream().pipeThrough(ds); bytes=new Uint8Array(await new Response(stream).arrayBuffer()); }
+  return new TextDecoder('utf-8').decode(bytes);
+}
 function rebindAfterLoad(){ editor.querySelectorAll('.tc, .turn').forEach(el=>el.contentEditable='false'); countPlaceholders(); togglePlaceholder(); }
 
 /* ============================ Raccourcis ============================ */
@@ -837,7 +867,6 @@ $('spkName').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault
 $('spkRole').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();addSpeaker();}});
 $('spkHead').onclick=()=>{ $('spkPanel').classList.toggle('collapsed'); $('spkCaret').textContent=$('spkPanel').classList.contains('collapsed')?'▸':'▾'; };
 $('ctxHead').onclick=()=>{ $('ctxPanel').classList.toggle('collapsed'); $('ctxCaret').textContent=$('ctxPanel').classList.contains('collapsed')?'▸':'▾'; };
-$('statsHead').onclick=()=>{ const p=$('statsPanel'); p.classList.toggle('collapsed'); $('statsCaret').textContent=p.classList.contains('collapsed')?'▸':'▾'; if(!p.classList.contains('collapsed')) renderStats(); };
 bindCtx('mTitle','studyTitle'); bindCtx('mLoc','location'); bindCtx('mDate','date'); bindCtx('mBy','transcribedBy');
 $('ctxAddField').onclick=addCustomField;
 $('tplSave').onclick=saveTemplate; $('tplDelete').onclick=deleteTemplate;
@@ -854,7 +883,7 @@ setupDropdown('importDd'); setupDropdown('exportDd');
 document.addEventListener('click',()=>document.querySelectorAll('.dd').forEach(d=>d.classList.remove('open')));
 document.querySelectorAll('[data-export]').forEach(b=>b.onclick=()=>doExport(b.dataset.export));
 document.querySelectorAll('[data-import]').forEach(b=>b.onclick=()=>importText(b.dataset.import));
-$('helpBtn').onclick=()=>$('helpModal').classList.add('show');
+$('helpBtn').onclick=()=>{ renderStats(); $('helpModal').classList.add('show'); };
 $('helpClose').onclick=()=>$('helpModal').classList.remove('show');
 $('helpModal').addEventListener('click',e=>{ if(e.target===$('helpModal')) $('helpModal').classList.remove('show'); });
 
