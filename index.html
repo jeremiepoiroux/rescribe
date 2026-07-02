@@ -20,7 +20,7 @@
   --radius: 9px; --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 14px rgba(0,0,0,.05);
 }
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --bg: #131318; --surf: #1c1c23; --surf2: #25252e; --border: #2f2f3a;
     --border-strong: #3d3d4a; --text: #ececef; --muted: #9a9aa4; --faint: #6f6f7a;
     --accent: #8b84f5; --accent-bg: #272448; --accent-border: #423d7a;
@@ -28,68 +28,62 @@
     --shadow: 0 1px 3px rgba(0,0,0,.3), 0 6px 18px rgba(0,0,0,.35);
   }
 }
+:root[data-theme="dark"] {
+  --bg: #131318; --surf: #1c1c23; --surf2: #25252e; --border: #2f2f3a;
+  --border-strong: #3d3d4a; --text: #ececef; --muted: #9a9aa4; --faint: #6f6f7a;
+  --accent: #8b84f5; --accent-bg: #272448; --accent-border: #423d7a;
+  --tag: #fbbf24; --tag-bg: #2c2410; --danger: #f87171;
+  --shadow: 0 1px 3px rgba(0,0,0,.3), 0 6px 18px rgba(0,0,0,.35);
+}
 html, body { height: 100%; }
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; display: flex; flex-direction: column; min-height: 100dvh; -webkit-font-smoothing: antialiased; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; display: flex; flex-direction: column; height: 100dvh; overflow: hidden; -webkit-font-smoothing: antialiased; }
 button { font-family: inherit; cursor: pointer; }
 kbd { display: inline-block; padding: 1px 6px; border-radius: 5px; font-size: .78em; font-family: ui-monospace, 'SF Mono', Menlo, monospace; background: var(--surf2); border: 1px solid var(--border-strong); border-bottom-width: 2px; color: var(--text); white-space: nowrap; }
 a { color: var(--accent); }
-
-/* App bar */
-.appbar { display: flex; align-items: center; gap: 10px; padding: 9px 18px; background: var(--surf); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 30; }
-.brand { display: flex; align-items: center; gap: 9px; }
-.brand svg { width: 24px; height: 24px; flex-shrink: 0; }
-.brand-text { display: flex; flex-direction: column; line-height: 1.05; }
-.brand-text .nm { font-weight: 650; font-size: 1.05rem; letter-spacing: -.01em; }
-.brand-text .nm b { color: var(--accent); font-weight: 700; }
-.brand-sub { font-size: .62rem; color: var(--faint); font-weight: 400; }
-.file-meta { flex: 1; min-width: 0; font-size: .85rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.save-state { font-size: .78rem; color: var(--faint); display: flex; align-items: center; gap: 6px; white-space: nowrap; }
-.save-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--faint); }
-.save-dot.saved { background: #0d9488; } .save-dot.dirty { background: #ea580c; }
-.icon-btn { display: inline-flex; align-items: center; justify-content: center; min-width: 32px; height: 32px; padding: 0 8px; border-radius: 8px; border: 1px solid var(--border); background: var(--surf); color: var(--text); font-size: .82rem; font-weight: 600; }
-.icon-btn:hover { background: var(--surf2); border-color: var(--border-strong); }
-.font-ctl { display: flex; gap: 3px; }
-.font-ctl .icon-btn:first-child { font-size: .72rem; } .font-ctl .icon-btn:last-child { font-size: .95rem; }
 .wrap { width: 100%; max-width: 940px; margin: 0 auto; padding: 0 18px; }
-main.content { flex: 1; width: 100%; }
-
-/* Player */
-.player { background: var(--surf); border-bottom: 1px solid var(--border); position: sticky; top: 51px; z-index: 20; padding: 12px 0 14px; }
-.player-inner { display: flex; flex-direction: column; gap: 10px; }
-#videoBox { display: none; justify-content: center; }
-#videoBox.show { display: flex; }
-#video { max-height: 220px; max-width: 100%; border-radius: var(--radius); background: #000; }
-.transport { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-.tp-btn { display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 10px; border: 1px solid var(--border); background: var(--surf); color: var(--text); font-size: 1.05rem; }
-.tp-btn:hover:not(:disabled) { background: var(--surf2); border-color: var(--border-strong); }
-.tp-btn:disabled { opacity: .4; cursor: default; }
-.tp-btn.primary { width: 46px; height: 46px; font-size: 1.3rem; background: var(--accent); color: #fff; border-color: var(--accent); }
-.tp-btn.primary:hover:not(:disabled) { filter: brightness(1.07); }
-.tp-btn.toggle { width: auto; padding: 0 12px; font-size: .82rem; gap: 6px; display: none; }
-.tp-btn.toggle.on { background: var(--accent-bg); color: var(--accent); border-color: var(--accent-border); }
-.time { font-variant-numeric: tabular-nums; font-size: .9rem; color: var(--muted); }
-.time b { color: var(--text); font-weight: 600; }
-.time .pct { color: var(--accent); font-weight: 600; }
-.time .mins { color: var(--faint); font-size: .82rem; }
-.ctl-group { display: flex; align-items: center; gap: 7px; font-size: .8rem; color: var(--muted); }
-.ctl-group label { white-space: nowrap; }
-#speed { width: 92px; accent-color: var(--accent); }
-#speedVal { min-width: 34px; font-weight: 600; color: var(--text); font-variant-numeric: tabular-nums; }
-select.mini { font-family: inherit; font-size: .8rem; padding: 5px 8px; border-radius: 7px; border: 1px solid var(--border); background: var(--surf); color: var(--text); }
+main.content { flex: 1 1 auto; width: 100%; overflow-y: auto; }
 .spacer { flex: 1; }
 
+/* Top bar (brand + transport + progress) — fixed, outside the scroll area */
+.topbar { flex: 0 0 auto; z-index: 30; background: var(--surf); border-bottom: 1px solid var(--border); padding: 8px 0 9px; }
+.tb-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.brand { display: flex; align-items: center; gap: 8px; }
+.brand svg { width: 22px; height: 22px; flex-shrink: 0; }
+.brand .nm { font-weight: 650; font-size: 1rem; letter-spacing: -.01em; }
+.brand .nm b { color: var(--accent); font-weight: 700; }
+.tb-title { flex: 1; min-width: 90px; font-size: .85rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tp-btn { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 9px; border: 1px solid var(--border); background: var(--surf); color: var(--text); font-size: 1rem; }
+.tp-btn:hover:not(:disabled) { background: var(--surf2); border-color: var(--border-strong); }
+.tp-btn:disabled { opacity: .4; cursor: default; }
+.tp-btn.primary { width: 40px; height: 40px; font-size: 1.15rem; background: var(--accent); color: #fff; border-color: var(--accent); }
+.tp-btn.primary:hover:not(:disabled) { filter: brightness(1.07); }
+.tp-btn.toggle { width: auto; padding: 0 10px; font-size: .8rem; gap: 5px; display: none; }
+.tp-btn.toggle.on { background: var(--accent-bg); color: var(--accent); border-color: var(--accent-border); }
+.time { font-variant-numeric: tabular-nums; font-size: .85rem; color: var(--muted); white-space: nowrap; }
+.time b { color: var(--text); font-weight: 600; }
+.time .pct { color: var(--accent); font-weight: 600; }
+.ctl-group { display: flex; align-items: center; gap: 5px; font-size: .78rem; color: var(--muted); }
+.ctl-group label { white-space: nowrap; }
+.mini-btn { width: 26px; height: 26px; border-radius: 7px; border: 1px solid var(--border); background: var(--surf); color: var(--text); font-size: 1rem; line-height: 1; display: inline-flex; align-items: center; justify-content: center; }
+.mini-btn:hover { background: var(--surf2); border-color: var(--border-strong); }
+#speedVal { min-width: 36px; text-align: center; font-weight: 600; color: var(--text); font-variant-numeric: tabular-nums; }
+select.mini { font-family: inherit; font-size: .78rem; padding: 4px 6px; border-radius: 7px; border: 1px solid var(--border); background: var(--surf); color: var(--text); }
+#videoBox { display: none; justify-content: center; margin-top: 8px; }
+#videoBox.show { display: flex; }
+#video { max-height: 200px; max-width: 100%; border-radius: var(--radius); background: #000; }
+
 /* Progress */
-.progress { user-select: none; }
-.track { position: relative; height: 16px; border-radius: 8px; background: var(--surf2); border: 1px solid var(--border); cursor: pointer; }
+.progress { user-select: none; margin-top: 9px; }
+.track { position: relative; height: 15px; border-radius: 8px; background: var(--surf2); border: 1px solid var(--border); cursor: pointer; }
 .fill { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: var(--accent); border-radius: 8px 0 0 8px; opacity: .35; pointer-events: none; }
-.seg { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--border-strong); pointer-events: none; }
-.head { position: absolute; top: 50%; width: 14px; height: 14px; margin-left: -7px; transform: translateY(-50%); background: var(--accent); border: 2px solid var(--surf); border-radius: 50%; pointer-events: none; box-shadow: var(--shadow); }
-.q-labels { position: relative; height: 18px; margin-top: 6px; }
-.q-labels span { position: absolute; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; font-variant-numeric: tabular-nums; }
-.q-labels span:first-child { transform: none; align-items: flex-start; }
-.q-labels span:last-child { transform: translateX(-100%); align-items: flex-end; }
-.q-labels b { font-size: .72rem; font-weight: 600; color: var(--muted); }
-.q-labels i { font-size: .66rem; font-style: normal; color: var(--faint); }
+.seg { position: absolute; top: 0; bottom: 0; width: 1px; pointer-events: none; }
+.seg.q { background: var(--border-strong); }
+.seg.th { background: var(--accent-border); }
+.head { position: absolute; top: 50%; width: 13px; height: 13px; margin-left: -6.5px; transform: translateY(-50%); background: var(--accent); border: 2px solid var(--surf); border-radius: 50%; pointer-events: none; box-shadow: var(--shadow); }
+.q-labels { position: relative; height: 16px; margin-top: 5px; }
+.q-labels span { position: absolute; transform: translateX(-50%); font-size: .7rem; color: var(--faint); font-variant-numeric: tabular-nums; }
+.q-labels span:first-child { transform: none; }
+.q-labels span:last-child { transform: translateX(-100%); }
 
 /* Toolbar */
 .toolbar { display: flex; flex-wrap: wrap; gap: 8px; padding: 12px 0; border-bottom: 1px solid var(--border); }
@@ -100,7 +94,14 @@ select.mini { font-family: inherit; font-size: .8rem; padding: 5px 8px; border-r
 .tool:disabled { opacity: .4; cursor: default; }
 .tool .ico { font-size: 1rem; line-height: 1; }
 .tool.accent { color: var(--accent); }
+.tool.tag { color: var(--tag); }
+.tool.on { background: var(--tag-bg); box-shadow: inset 0 0 0 1.5px var(--tag); }
 .badge { font-size: .7rem; background: var(--accent-bg); color: var(--accent); padding: 1px 6px; border-radius: 10px; font-weight: 600; }
+
+/* Save nudge */
+.save-nudge { display: none; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 12px 0 0; padding: 10px 14px; background: var(--accent-bg); border: 1px solid var(--accent-border); border-radius: 10px; font-size: .85rem; color: var(--text); }
+.save-nudge.show { display: flex; }
+.save-nudge .sn-actions { display: flex; gap: 8px; }
 
 /* Panels */
 .panel { padding: 12px 0; border-bottom: 1px solid var(--border); }
@@ -120,6 +121,8 @@ select.mini { font-family: inherit; font-size: .8rem; padding: 5px 8px; border-r
 .btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
 .btn.primary:hover { filter: brightness(1.07); }
 .btn.small { padding: 6px 11px; font-size: .78rem; }
+.btn.danger { color: var(--danger); border-color: var(--danger); }
+.btn.danger:hover { background: var(--tag-bg); }
 .spk-list { display: flex; flex-wrap: wrap; gap: 8px; }
 .spk-chip { display: inline-flex; align-items: center; gap: 8px; padding: 5px 6px 5px 11px; border-radius: 20px; border: 1px solid var(--border); background: var(--surf); font-size: .82rem; cursor: pointer; }
 .spk-chip:hover { border-color: var(--accent-border); background: var(--accent-bg); }
@@ -139,11 +142,11 @@ select.mini { font-family: inherit; font-size: .8rem; padding: 5px 8px; border-r
 .stat-bar span { display: block; height: 100%; border-radius: 4px; }
 .stat-val { font-variant-numeric: tabular-nums; color: var(--muted); min-width: 92px; text-align: right; }
 
-/* Context grid + templates */
+/* Context */
 .ctx-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .ctx-grid label { display: flex; flex-direction: column; gap: 4px; font-size: .74rem; color: var(--muted); }
-.ctx-grid input { font-family: inherit; font-size: .85rem; padding: 7px 11px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); }
-.ctx-grid input:focus { outline: 2px solid var(--accent); outline-offset: -1px; border-color: transparent; }
+.ctx-grid input, .ctx-grid select { font-family: inherit; font-size: .85rem; padding: 7px 11px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); }
+.ctx-grid input:focus, .ctx-grid select:focus { outline: 2px solid var(--accent); outline-offset: -1px; border-color: transparent; }
 .ctx-grid input.req-empty { border-color: var(--danger); background: var(--tag-bg); }
 .req { color: var(--danger); margin-left: 2px; }
 .ctx-custom { margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
@@ -164,25 +167,22 @@ select.mini { font-family: inherit; font-size: .8rem; padding: 5px 8px; border-r
 .fr-bar input { font-family: inherit; font-size: .85rem; padding: 7px 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); }
 .fr-bar .lbl { font-size: .8rem; color: var(--muted); }
 
-/* Save nudge */
-.save-nudge { display: none; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 12px 0 0; padding: 10px 14px; background: var(--accent-bg); border: 1px solid var(--accent-border); border-radius: 10px; font-size: .85rem; color: var(--text); }
-.save-nudge.show { display: flex; }
-.save-nudge .sn-actions { display: flex; gap: 8px; }
-
 /* Editor */
-.editor { min-height: 46vh; padding: 22px 4px 80px; font-size: 17px; line-height: 1.95; outline: none; color: var(--text); caret-color: var(--accent); }
 .ed-wrap { position: relative; }
+.editor { min-height: 46vh; padding: 22px 4px 80px; font-size: 17px; line-height: 1.95; outline: none; color: var(--text); caret-color: var(--accent); white-space: pre-wrap; }
 .ed-ph { position: absolute; top: 22px; left: 4px; right: 4px; color: var(--faint); pointer-events: none; white-space: pre-line; line-height: 1.85; font-size: 16px; }
 .ed-ph.hide { display: none; }
 .tc { display: inline-block; font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: .78em; font-weight: 600; padding: 1px 7px; border-radius: 6px; background: var(--accent-bg); color: var(--accent); border: 1px solid var(--accent-border); cursor: pointer; user-select: none; vertical-align: 1px; }
 .tc:hover { background: var(--accent); color: #fff; }
 .turn { margin: 0 2px; white-space: nowrap; }
 .turn .turn-spk { font-weight: 700; margin-left: 5px; }
+.turn-hi { background: var(--accent-bg); border-radius: 4px; box-shadow: 0 0 0 3px var(--accent-bg); transition: background .3s; }
+.pause-mark { display: inline-block; font-family: ui-monospace, Menlo, monospace; font-size: .78em; font-weight: 600; padding: 1px 8px; margin: 0 2px; border-radius: 6px; background: var(--tag-bg); color: var(--tag); border: 1px solid var(--tag); cursor: pointer; user-select: none; vertical-align: 1px; }
 .dropzone-overlay { display: none; position: fixed; inset: 0; z-index: 100; background: rgba(91,84,214,.12); border: 3px dashed var(--accent); align-items: center; justify-content: center; font-size: 1.4rem; font-weight: 600; color: var(--accent); }
 .dropzone-overlay.show { display: flex; }
 
 /* popup */
-.spk-pop { position: absolute; z-index: 60; min-width: 210px; max-width: 300px; background: var(--surf); border: 1px solid var(--border-strong); border-radius: 10px; box-shadow: var(--shadow); padding: 5px; display: none; }
+.spk-pop { position: fixed; z-index: 60; min-width: 210px; max-width: 300px; background: var(--surf); border: 1px solid var(--border-strong); border-radius: 10px; box-shadow: var(--shadow); padding: 5px; display: none; }
 .spk-pop.show { display: block; }
 .spk-pop-item { display: flex; align-items: center; gap: 9px; padding: 7px 10px; border-radius: 7px; font-size: .85rem; cursor: pointer; }
 .spk-pop-item.active, .spk-pop-item:hover { background: var(--accent-bg); }
@@ -196,8 +196,17 @@ select.mini { font-family: inherit; font-size: .8rem; padding: 5px 8px; border-r
 .spk-pop-empty { padding: 8px 10px; font-size: .8rem; color: var(--faint); }
 
 /* Footer */
-.footer { background: var(--surf); border-top: 1px solid var(--border); padding: 12px 0; position: sticky; bottom: 0; z-index: 20; }
-.footer-inner { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.footer { flex: 0 0 auto; background: var(--surf); border-top: 1px solid var(--border); padding: 12px 0; z-index: 20; }
+.to-top { position: fixed; right: 18px; bottom: 76px; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-strong); background: var(--surf); color: var(--text); font-size: 1.15rem; box-shadow: var(--shadow); display: none; z-index: 50; align-items: center; justify-content: center; }
+.to-top.show { display: inline-flex; }
+.footer-inner { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.footer .icon-btn { display: inline-flex; align-items: center; justify-content: center; min-width: 32px; height: 32px; padding: 0 8px; border-radius: 8px; border: 1px solid var(--border); background: var(--surf); color: var(--text); font-size: .82rem; font-weight: 600; }
+.footer .icon-btn:hover { background: var(--surf2); border-color: var(--border-strong); }
+.font-ctl { display: flex; gap: 3px; }
+.imported-name { font-size: .78rem; color: var(--faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px; }
+.save-state { font-size: .76rem; color: var(--faint); display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+.save-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--faint); }
+.save-dot.saved { background: #0d9488; } .save-dot.dirty { background: #ea580c; }
 .dd { position: relative; }
 .dd-menu { display: none; position: absolute; bottom: calc(100% + 6px); left: 0; min-width: 220px; background: var(--surf); border: 1px solid var(--border-strong); border-radius: 10px; box-shadow: var(--shadow); padding: 5px; z-index: 40; }
 .dd-menu.up-right { left: auto; right: 0; }
@@ -219,45 +228,35 @@ select.mini { font-family: inherit; font-size: .8rem; padding: 5px 8px; border-r
 .sc-table td { padding: 7px 0; border-bottom: 1px solid var(--border); font-size: .88rem; vertical-align: middle; }
 .sc-table td:last-child { text-align: right; white-space: nowrap; }
 .sc-section { font-size: .76rem; text-transform: uppercase; letter-spacing: .05em; color: var(--accent); font-weight: 700; padding-top: 16px !important; border: none !important; }
-
-@media (max-width: 640px) { .player { top: 49px; } .ctl-group.hide-sm { display: none; } .brand-sub { display: none; } }
 </style>
 </head>
 <body>
 
-<header class="appbar">
-  <div class="brand">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 12h2l2-7 3 14 3-11 2 5h6" stroke="var(--accent)"/></svg>
-    <div class="brand-text"><span class="nm">Re<b>scribe</b></span><span class="brand-sub">inspired by oTranscribe</span></div>
-  </div>
-  <div class="file-meta" id="fileMeta"></div>
-  <div class="save-state"><span class="save-dot" id="saveDot"></span><span id="saveText">—</span></div>
-  <div class="font-ctl"><button class="icon-btn" id="fontDown" data-i18n-title="fontSmaller">A−</button><button class="icon-btn" id="fontUp" data-i18n-title="fontLarger">A+</button></div>
-  <button class="icon-btn" id="langBtn" title="Language / Langue">FR</button>
-  <button class="icon-btn" id="helpBtn" data-i18n-title="help">?</button>
-</header>
-
-<section class="player">
- <div class="wrap player-inner">
-  <div id="videoBox"><video id="video" playsinline></video></div>
-  <div class="transport">
+<header class="topbar">
+ <div class="wrap">
+  <div class="tb-row">
+    <div class="brand">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 12h2l2-7 3 14 3-11 2 5h6" stroke="var(--accent)"/></svg>
+      <span class="nm">Re<b>scribe</b></span>
+    </div>
+    <div class="tb-title" id="fileMeta"></div>
     <button class="tp-btn" id="rewBtn" data-i18n-title="rewind" disabled>«</button>
     <button class="tp-btn primary" id="playBtn" data-i18n-title="playpause" disabled>▶</button>
     <button class="tp-btn" id="fwdBtn" data-i18n-title="forward" disabled>»</button>
     <button class="tp-btn toggle" id="videoToggle" data-i18n-title="toggleVideo"><span>🎬</span><span data-i18n="video"></span></button>
     <div class="time"><b id="curTime">0:00</b> / <span id="durTime">0:00</span> <span class="pct" id="pctTime">0%</span></div>
-    <div class="spacer"></div>
+    <div class="ctl-group"><button class="mini-btn" id="speedDown" data-i18n-title="slower">−</button><span id="speedVal">1.0×</span><button class="mini-btn" id="speedUp" data-i18n-title="faster">+</button></div>
     <div class="ctl-group"><label for="stepSel" data-i18n="skip"></label>
       <select class="mini" id="stepSel"><option value="2">2 s</option><option value="5" selected>5 s</option><option value="10">10 s</option></select></div>
     <div class="ctl-group"><label for="rwSel" data-i18n="rewindPause"></label>
       <select class="mini" id="rwSel"><option value="0">0 s</option><option value="1" selected>1 s</option><option value="2">2 s</option></select></div>
-    <div class="ctl-group hide-sm"><label for="speed" data-i18n="speed"></label>
-      <input type="range" id="speed" min="0.5" max="2" step="0.1" value="1"><span id="speedVal">1.0×</span></div>
   </div>
+  <div id="videoBox"><video id="video" playsinline></video></div>
   <div class="progress">
     <div class="track" id="track">
       <div class="fill" id="fill"></div>
-      <div class="seg" style="left:25%"></div><div class="seg" style="left:50%"></div><div class="seg" style="left:75%"></div>
+      <div class="seg q" style="left:25%"></div><div class="seg q" style="left:50%"></div><div class="seg q" style="left:75%"></div>
+      <div class="seg th" style="left:33.333%"></div><div class="seg th" style="left:66.667%"></div>
       <div class="head" id="head" style="left:0"></div>
     </div>
     <div class="q-labels" id="qLabels">
@@ -269,7 +268,7 @@ select.mini { font-family: inherit; font-size: .8rem; padding: 5px 8px; border-r
     </div>
   </div>
  </div>
-</section>
+</header>
 
 <main class="content">
  <div class="wrap">
@@ -280,18 +279,18 @@ select.mini { font-family: inherit; font-size: .8rem; padding: 5px 8px; border-r
       <button class="btn small" id="snIgnore" data-i18n="saveNudgeIgnore"></button>
     </span>
   </div>
+
   <div class="toolbar">
     <div class="tgroup">
       <button class="tool accent" id="tcBtn" data-i18n-title="timecodeTitle"><span class="ico">⏱</span><span data-i18n="timecode"></span></button>
     </div>
     <div class="tgroup">
       <button class="tool accent" id="insAnnotBtn" data-i18n-title="insAnnotTitle"><span class="ico">#</span><span data-i18n="insAnnot"></span></button>
-      <div class="sep"></div>
-      <button class="tool" id="prevPhBtn" data-i18n-title="prevTitle">↤ <span data-i18n="prev"></span></button>
-      <button class="tool" id="nextPhBtn" data-i18n-title="nextTitle">↦ <span data-i18n="next"></span> <span class="badge" id="phCount" style="display:none">0</span></button>
+      <button class="tool tag" id="pauseBtn" data-i18n-title="pauseTitle"><span class="ico">⏸</span><span data-i18n="pauseTag"></span></button>
+      <button class="tool" id="lastTcBtn" data-i18n-title="lastTcTitle">↧ <span data-i18n="lastTc"></span></button>
     </div>
     <div class="tgroup">
-      <button class="tool" id="frToggle">⇄ <span data-i18n="replace"></span></button>
+      <button class="tool" id="frToggle">⇄ <span data-i18n="findReplace"></span></button>
     </div>
   </div>
 
@@ -309,9 +308,11 @@ select.mini { font-family: inherit; font-size: .8rem; padding: 5px 8px; border-r
     <div class="panel-head" id="ctxHead"><h3><span id="ctxCaret">▾</span> <span data-i18n="context"></span> <span class="hint" data-i18n="contextHint"></span></h3></div>
     <div class="panel-body">
       <div class="ctx-grid">
-        <label><span><span data-i18n="studyTitle"></span><span class="req">*</span></span><input type="text" id="mTitle"></label>
-        <label><span data-i18n="location"></span><input type="text" id="mLoc"></label>
-        <label><span><span data-i18n="date"></span><span class="req">*</span></span><input type="text" id="mDate" data-i18n-ph="datePh"></label>
+        <label><span><span data-i18n="interviewTitle"></span><span class="req">*</span></span><input type="text" id="mInterview"></label>
+        <label><span data-i18n="studyTitle"></span><input type="text" id="mStudy"></label>
+        <label><span><span data-i18n="date"></span><span class="req">*</span></span><input type="date" id="mDate"></label>
+        <label><span data-i18n="mode"></span>
+          <select id="mMode"><option value="" data-i18n="modeNone"></option><option value="visio" data-i18n="modeVisio"></option><option value="presentiel" data-i18n="modePresentiel"></option></select></label>
         <label><span><span data-i18n="transcribedBy"></span><span class="req">*</span></span><input type="text" id="mBy"></label>
       </div>
       <div class="ctx-custom" id="ctxCustom"></div>
@@ -348,6 +349,7 @@ select.mini { font-family: inherit; font-size: .8rem; padding: 5px 8px; border-r
 
 <footer class="footer">
  <div class="wrap footer-inner">
+   <button class="btn danger" id="resetBtn">🗑 <span data-i18n="reset"></span></button>
    <button class="btn" id="openMediaBtn">🎧 <span data-i18n="importMedia"></span></button>
    <div class="dd" id="importDd">
      <button class="btn" id="importBtn">📄 <span data-i18n="importText"></span> ▾</button>
@@ -359,7 +361,13 @@ select.mini { font-family: inherit; font-size: .8rem; padding: 5px 8px; border-r
        <button class="dd-item" data-import="html"><span data-i18n="htmlFile"></span> <small>.html</small></button>
      </div>
    </div>
+   <span class="imported-name" id="importedName"></span>
+   <div class="save-state"><span class="save-dot" id="saveDot"></span><span id="saveText">—</span></div>
    <div class="spacer"></div>
+   <div class="font-ctl"><button class="icon-btn" id="fontDown" data-i18n-title="fontSmaller">A−</button><button class="icon-btn" id="fontUp" data-i18n-title="fontLarger">A+</button></div>
+   <button class="icon-btn" id="themeBtn" data-i18n-title="theme">🌙</button>
+   <button class="icon-btn" id="langBtn" title="Language / Langue">FR</button>
+   <button class="icon-btn" id="helpBtn" data-i18n-title="help">?</button>
    <button class="btn" id="connectFileBtn" data-i18n-title="autosaveTitle">💾 <span data-i18n="autosave"></span></button>
    <div class="dd" id="exportDd">
      <button class="btn primary" id="exportBtn">⤓ <span data-i18n="export"></span> ▾</button>
@@ -373,8 +381,9 @@ select.mini { font-family: inherit; font-size: .8rem; padding: 5px 8px; border-r
  </div>
 </footer>
 
+<button class="to-top" id="toTop" data-i18n-title="toTop" aria-label="Top">↑</button>
 <input type="file" id="mediaInput" accept="audio/*,video/*" hidden>
-<input type="file" id="textInput" accept=".txt,.md,.markdown,.html,.htm,.json,.otr,.rescribe.json" hidden>
+<input type="file" id="textInput" hidden>
 <div class="dropzone-overlay" id="dropOverlay" data-i18n="dropHere"></div>
 <div class="spk-pop" id="spkPop"></div>
 
@@ -402,7 +411,8 @@ select.mini { font-family: inherit; font-size: .8rem; padding: 5px 8px; border-r
 
 <script>
 'use strict';
-const VERSION = '1.0.0';
+const VERSION = '1.3.0';
+const BUILD = '2026-07-02 15:00';
 const REPO_URL = 'https://github.com/jeremiepoiroux/rescribe';
 
 /* ============================ i18n ============================ */
@@ -410,93 +420,101 @@ const I18N = {
   fr: {
     noMedia:"Aucun média chargé", reloadHint:"— recharge le média pour réactiver les timecodes",
     help:"Aide", rewind:"Reculer (F1)", playpause:"Lecture / Pause (Échap)", forward:"Avancer (F2)",
-    skip:"Saut", rewindPause:"Recul pause", speed:"Vitesse", video:"Vidéo", toggleVideo:"Afficher / masquer la vidéo",
+    slower:"Ralentir", faster:"Accélérer",
+    skip:"Saut", rewindPause:"Recul pause", video:"Vidéo", toggleVideo:"Afficher / masquer la vidéo",
     fontSmaller:"Réduire le texte", fontLarger:"Agrandir le texte",
-    timecode:"Timecode", timecodeTitle:"Timecode + interlocuteur (⌘J)",
+    timecode:"Timecode", timecodeTitle:"Timecode + interlocuteur (⌘J ou @)",
     insAnnot:"Annotation", insAnnotTitle:"Insérer une annotation (ou taper #)",
+    pauseTag:"Pause", pauseTitle:"Marquer une pause de retranscription (repère pour reprendre)",
+    lastTc:"Dernier TC", lastTcTitle:"Aller au dernier timecode / repère placé",
     prev:"Précédent", prevTitle:"Annotation précédente", next:"Suivant", nextTitle:"Annotation suivante",
-    replace:"Remplacer", replaceFind:"Remplacer", by:"par", toFind:"texte à remplacer", replacement:"remplacement", nextOne:"Prochain", all:"Tout",
+    replace:"Remplacer", findReplace:"Chercher & remplacer", replaceFind:"Remplacer", by:"par", toFind:"texte à remplacer", replacement:"remplacement", nextOne:"Prochain", all:"Tout",
+    theme:"Thème clair / sombre", toTop:"Remonter en haut",
     speakers:"Interlocuteurs", speakersHintHtml:'— <kbd>⌘J</kbd> ou <kbd>@</kbd> pour horodater et attribuer',
     namePh:"Nom (ex. Marie Dupont)", rolePh:"Fonction (ex. enquêtée)", interviewer:"Intervieweur", add:"Ajouter",
-    speakersEmptyHtml:"Aucun interlocuteur. Ajoute un nom (coche « Intervieweur » pour l'enquêteur). Ensuite <kbd>⌘J</kbd> insère un timecode et te fait choisir qui parle.",
+    speakersEmptyHtml:"Aucun interlocuteur. Ajoute un nom (coche « Intervieweur » pour l'enquêteur). Ensuite <kbd>⌘J</kbd> ou <kbd>@</kbd> insère un timecode et fait choisir qui parle.",
     noSpeaker:"— sans interlocuteur —",
     stats:"Statistiques", statsHint:"— temps de parole par interlocuteur", statsEmpty:"Pose des timecodes (⌘J) en attribuant les interlocuteurs pour voir les temps de parole.",
     context:"Contexte", contextHint:"— obligatoire, apparaît en en-tête des exports",
-    studyTitle:"Titre de l'étude", location:"Lieu / visio", date:"Date de l'entretien", datePh:"ex. 12 mars 2026", transcribedBy:"Retranscrit par",
-    addField:"Ajouter un champ", fieldLabel:"Intitulé", fieldValue:"Valeur",
-    duration:"Durée",
+    interviewTitle:"Titre de l'entretien", studyTitle:"Titre de l'étude", date:"Date de l'entretien", transcribedBy:"Retranscrit par",
+    mode:"Format", modeNone:"—", modeVisio:"Visio", modePresentiel:"Présentiel",
+    addField:"Ajouter un champ", fieldLabel:"Intitulé", fieldValue:"Valeur", duration:"Durée",
     autoIncluded:"Ajoutés automatiquement", autoIncludedEmpty:"Les interlocuteurs et la durée seront ajoutés à l'en-tête.",
     templatesLbl:"Modèle :", templatesPlaceholder:"— charger un modèle —", saveTemplate:"Enregistrer", deleteTemplate:"Supprimer le modèle",
     templateName:"Nom du modèle de contexte :", templateSaved:"Modèle enregistré", templateApplied:"Modèle appliqué", templateNone:"Sélectionne d'abord un modèle",
-    fillContext:"Remplis le contexte obligatoire (titre, date, retranscrit par) avant d'exporter.",
+    fillContext:"Remplis le contexte obligatoire (titre de l'entretien, date, retranscrit par) avant d'exporter.",
     createAnnot:"Créer",
-    editorPlaceholder:"Bienvenue dans Rescribe.\n\nPour commencer :\n1 · Ouvrir l'audio ou la vidéo — bouton « Importer média » en bas.\n2 · Importer ou coller la transcription automatique — bouton « Importer texte ».\n3 · Ajouter les interlocuteurs, puis réécouter en corrigeant le texte.\n\n⌘J (ou @) insère un timecode + l'interlocuteur qui parle · # insère une annotation ([inaudible]…) · Échap met en pause (et recule un peu).",
-    importMedia:"Importer média", importText:"Importer texte", projectFile:"Projet", textFile:"Texte", officeFile:"Word / OpenDocument",
+    editorPlaceholder:"Bienvenue dans Rescribe.\n\nPour commencer :\n1 · Ouvrir l'audio ou la vidéo — bouton « Média » en bas.\n2 · Importer ou coller la transcription automatique — bouton « Texte ».\n3 · Ajouter les interlocuteurs, puis réécouter en corrigeant le texte.\n\n⌘J (ou @) insère un timecode + l'interlocuteur qui parle · # insère une annotation ([inaudible]…) · Échap met en pause (et recule un peu).",
+    reset:"Nouvelle transcription", resetConfirm:"Démarrer une nouvelle retranscription ? Le texte, le contexte et les interlocuteurs actuels seront effacés (les modèles sont conservés).", resetDone:"Nouvelle retranscription",
+    importMedia:"Média", importText:"Texte", projectFile:"Projet", textFile:"Texte", officeFile:"Word / OpenDocument",
     mediaLoaded:"Média importé : {0} ({1})", textImported:"Texte importé", docError:"Impossible de lire ce fichier", docUnsupported:"Format .doc non supporté — enregistre-le en .docx",
-    markdownFile:"Markdown", htmlFile:"HTML", autosave:"Sauvegarde continue…", autosaveTitle:"Choisir un fichier .rescribe.json réécrit automatiquement (toutes les 2 min et à ⌘S). À faire une fois par projet ; différent de « Exporter » qui télécharge un instantané.", export:"Exporter", projectReeditable:"Projet (ré-éditable)",
+    markdownFile:"Markdown", htmlFile:"HTML", autosave:"Sauvegarde continue…", autosaveTitle:"Choisir un fichier .rescribe.json réécrit automatiquement à chaque changement. À faire une fois par projet ; différent de « Exporter » qui télécharge un instantané où tu veux.", export:"Exporter", projectReeditable:"Projet (ré-éditable)",
     dropHere:"Dépose ton fichier audio/vidéo",
     saveNudge:"Sauvegarde sur disque non configurée — le travail est conservé dans le navigateur en attendant.", saveNudgeConfig:"Configurer", saveNudgeIgnore:"Ignorer",
     helpTitle:"À propos et raccourcis",
     about:"Rescribe est un éditeur local pour reprendre les transcriptions d'entretiens générées par IA. Inspiré d'oTranscribe et repensé pour la relecture : réécoute de l'audio et correction du texte, avec des timecodes cliquables qui attribuent chaque prise de parole à un interlocuteur, un en-tête de contexte réutilisable, et une sauvegarde locale + sur disque. Tout reste dans le navigateur — rien n'est envoyé.",
     repoLink:"Code source et journal des améliorations sur GitHub ↗",
-    shortcutsSub:"", otherViaButtons:"Les autres actions (annotations, suivant/précédent, remplacer) sont accessibles par les boutons de la barre d'outils.",
     scPlayback:"Lecture", scEditing:"Édition",
     scPlayPause:"Lecture / Pause (+ recul réglable)", scRewind:"Reculer", scForward:"Avancer",
     scTimecode:"Timecode + interlocuteur", scAnnot:"Insérer une annotation", scSave:"Sauvegarder le projet sur le disque",
-    kEsc:"Échap", ideaBy:"idée de", inspiredShort:"inspiré d'oTranscribe",
+    kEsc:"Échap", ideaBy:"idée de", inspiredShort:"inspiré d'oTranscribe", build:"version",
     modifying:"modifié…", savedLocal:"enregistré (local)", noSpeakerPop:"Aucune annotation disponible.",
-    noMarks:"Aucune annotation à compléter", notFound:"introuvable",
+    noMarks:"Aucun repère dans le texte", notFound:"introuvable",
     fsUnsupported:"Auto-sauvegarde fichier non supportée ici → Chrome/Edge, ou « Exporter ». Sauvegarde locale active.",
-    fsEnabled:"Auto-sauvegarde activée → écriture toutes les {0} min", projImported:"Projet importé", projInvalid:"Fichier projet invalide"
+    fsEnabled:"Sauvegarde continue activée → écriture à chaque changement", projImported:"Projet importé", projInvalid:"Fichier projet invalide"
   },
   en: {
     noMedia:"No media loaded", reloadHint:"— reload the media to reactivate timecodes",
     help:"Help", rewind:"Rewind (F1)", playpause:"Play / Pause (Esc)", forward:"Forward (F2)",
-    skip:"Skip", rewindPause:"Pause rewind", speed:"Speed", video:"Video", toggleVideo:"Show / hide video",
+    slower:"Slower", faster:"Faster",
+    skip:"Skip", rewindPause:"Pause rewind", video:"Video", toggleVideo:"Show / hide video",
     fontSmaller:"Smaller text", fontLarger:"Larger text",
-    timecode:"Timecode", timecodeTitle:"Timecode + speaker (⌘J)",
+    timecode:"Timecode", timecodeTitle:"Timecode + speaker (⌘J or @)",
     insAnnot:"Annotation", insAnnotTitle:"Insert an annotation (or type #)",
+    pauseTag:"Pause", pauseTitle:"Mark a transcription pause (bookmark to resume)",
+    lastTc:"Last TC", lastTcTitle:"Go to the last timecode / marker placed",
     prev:"Previous", prevTitle:"Previous annotation", next:"Next", nextTitle:"Next annotation",
-    replace:"Replace", replaceFind:"Replace", by:"with", toFind:"text to replace", replacement:"replacement", nextOne:"Next", all:"All",
+    replace:"Replace", findReplace:"Find & replace", replaceFind:"Replace", by:"with", toFind:"text to replace", replacement:"replacement", nextOne:"Next", all:"All",
+    theme:"Light / dark theme", toTop:"Back to top",
     speakers:"Speakers", speakersHintHtml:'— <kbd>⌘J</kbd> or <kbd>@</kbd> to timestamp and attribute',
     namePh:"Name (e.g. Mary Doe)", rolePh:"Role (e.g. respondent)", interviewer:"Interviewer", add:"Add",
-    speakersEmptyHtml:"No speakers yet. Add a name (tick “Interviewer” for the interviewer). Then <kbd>⌘J</kbd> inserts a timecode and lets you pick who's speaking.",
+    speakersEmptyHtml:"No speakers yet. Add a name (tick “Interviewer” for the interviewer). Then <kbd>⌘J</kbd> or <kbd>@</kbd> inserts a timecode and lets you pick who's speaking.",
     noSpeaker:"— no speaker —",
     stats:"Statistics", statsHint:"— talk time per speaker", statsEmpty:"Add timecodes (⌘J) attributing speakers to see talk time.",
     context:"Context", contextHint:"— required, shown in the export header",
-    studyTitle:"Study title", location:"Location / call", date:"Interview date", datePh:"e.g. March 12, 2026", transcribedBy:"Transcribed by",
-    addField:"Add a field", fieldLabel:"Label", fieldValue:"Value",
-    duration:"Duration",
+    interviewTitle:"Interview title", studyTitle:"Study title", date:"Interview date", transcribedBy:"Transcribed by",
+    mode:"Format", modeNone:"—", modeVisio:"Video call", modePresentiel:"In person",
+    addField:"Add a field", fieldLabel:"Label", fieldValue:"Value", duration:"Duration",
     autoIncluded:"Added automatically", autoIncludedEmpty:"Speakers and duration will be added to the header.",
     templatesLbl:"Template:", templatesPlaceholder:"— load a template —", saveTemplate:"Save", deleteTemplate:"Delete template",
     templateName:"Context template name:", templateSaved:"Template saved", templateApplied:"Template applied", templateNone:"Pick a template first",
-    fillContext:"Fill in the required context (title, date, transcribed by) before exporting.",
+    fillContext:"Fill in the required context (interview title, date, transcribed by) before exporting.",
     createAnnot:"Create",
-    editorPlaceholder:"Welcome to Rescribe.\n\nGetting started:\n1 · Open the audio or video — “Import media” button below.\n2 · Import or paste the automatic transcript — “Import text” button.\n3 · Add the speakers, then replay while fixing the text.\n\n⌘J (or @) inserts a timecode + the current speaker · # inserts an annotation ([inaudible]…) · Esc pauses (and rewinds a little).",
-    importMedia:"Import media", importText:"Import text", projectFile:"Project", textFile:"Text", officeFile:"Word / OpenDocument",
+    editorPlaceholder:"Welcome to Rescribe.\n\nGetting started:\n1 · Open the audio or video — “Media” button below.\n2 · Import or paste the automatic transcript — “Text” button.\n3 · Add the speakers, then replay while fixing the text.\n\n⌘J (or @) inserts a timecode + the current speaker · # inserts an annotation ([inaudible]…) · Esc pauses (and rewinds a little).",
+    reset:"New transcription", resetConfirm:"Start a new transcription? The current text, context and speakers will be cleared (templates are kept).", resetDone:"New transcription",
+    importMedia:"Media", importText:"Text", projectFile:"Project", textFile:"Text", officeFile:"Word / OpenDocument",
     mediaLoaded:"Media loaded: {0} ({1})", textImported:"Text imported", docError:"Couldn't read this file", docUnsupported:"The old .doc format isn't supported — save it as .docx",
-    markdownFile:"Markdown", htmlFile:"HTML", autosave:"Continuous save…", autosaveTitle:"Pick a .rescribe.json file that's rewritten automatically (every 2 min and on ⌘S). Once per project; unlike “Export”, which downloads a one-off snapshot.", export:"Export", projectReeditable:"Project (re-editable)",
+    markdownFile:"Markdown", htmlFile:"HTML", autosave:"Continuous save…", autosaveTitle:"Pick a .rescribe.json file rewritten automatically on every change. Once per project; unlike “Export”, which downloads a one-off snapshot anywhere.", export:"Export", projectReeditable:"Project (re-editable)",
     dropHere:"Drop your audio/video file",
     saveNudge:"Disk save not set up — work is kept in the browser meanwhile.", saveNudgeConfig:"Set up", saveNudgeIgnore:"Dismiss",
     helpTitle:"About & shortcuts",
     about:"Rescribe is a local editor for revisiting AI-generated interview transcripts. Inspired by oTranscribe and rebuilt for the second pass: replay the audio and fix the text, with clickable timecodes that attribute each turn to a speaker, a reusable context header, and local + on-disk saving. Everything stays in the browser — nothing is uploaded.",
     repoLink:"Source code and changelog on GitHub ↗",
-    shortcutsSub:"", otherViaButtons:"Other actions (annotations, next/previous, replace) are available from the toolbar buttons.",
     scPlayback:"Playback", scEditing:"Editing",
     scPlayPause:"Play / Pause (+ adjustable rewind)", scRewind:"Rewind", scForward:"Forward",
     scTimecode:"Timecode + speaker", scAnnot:"Insert an annotation", scSave:"Save the project to disk",
-    kEsc:"Esc", ideaBy:"idea by", inspiredShort:"inspired by oTranscribe",
+    kEsc:"Esc", ideaBy:"idea by", inspiredShort:"inspired by oTranscribe", build:"build",
     modifying:"edited…", savedLocal:"saved (local)", noSpeakerPop:"No annotation available.",
-    noMarks:"No annotation to fill", notFound:"not found",
+    noMarks:"No marker in the text", notFound:"not found",
     fsUnsupported:"File auto-save unsupported here → use Chrome/Edge, or “Export”. Local save is active.",
-    fsEnabled:"Auto-save on → writing every {0} min", projImported:"Project imported", projInvalid:"Invalid project file"
+    fsEnabled:"Continuous save on → writes on every change", projImported:"Project imported", projInvalid:"Invalid project file"
   }
 };
 const TAGS = { fr:{ cut:'[coupé]', inaudible:'[inaudible]', redacted:'[redacted]' }, en:{ cut:'[cut]', inaudible:'[inaudible]', redacted:'[redacted]' } };
 const ALL_TAGS = ['[coupé]','[cut]','[inaudible]','[redacted]','[…]','[...]','[?]'];
 const ANNOT = { all(){ try{ return JSON.parse(localStorage.getItem('rescribe_annot')||'[]'); }catch{ return []; } }, save(a){ localStorage.setItem('rescribe_annot', JSON.stringify(a)); } };
 function allTags(){ return ALL_TAGS.concat(ANNOT.all()); }
-const REQUIRED_META = ['studyTitle','date','transcribedBy'];
+const REQUIRED_META = ['interviewTitle','date','transcribedBy'];
 
 let lang = localStorage.getItem('rescribe_lang') || (navigator.language.startsWith('fr') ? 'fr' : 'en');
 function t(key, ...a){ let s = (I18N[lang] && I18N[lang][key]) || key; a.forEach((v,i)=> s = s.replace('{'+i+'}', v)); return s; }
@@ -509,25 +527,31 @@ function applyI18n() {
   $('editorPh').textContent = t('editorPlaceholder'); togglePlaceholder();
   $('langBtn').textContent = lang.toUpperCase();
   $('repoLink').href = REPO_URL;
-  $('versionLine').textContent = 'Rescribe v'+VERSION+' · '+t('ideaBy')+' Jérémie Poiroux · '+t('inspiredShort')+' · 100% local';
+  $('versionLine').textContent = 'Rescribe v'+VERSION+' ('+t('build')+' '+BUILD+') · '+t('ideaBy')+' Jérémie Poiroux · '+t('inspiredShort')+' · 100% local';
   renderTemplateSelect(); renderCustomFields();
-  if (!state.fileName) $('fileMeta').textContent = t('noMedia');
-  else $('fileMeta').textContent = (state.player && state.player.src) ? state.fileName : state.fileName + ' ' + t('reloadHint');
+  if (!state.fileName) $('fileMeta').textContent = state.meta.interviewTitle || t('noMedia');
+  else $('fileMeta').textContent = (state.player && state.player.src) ? (state.meta.interviewTitle||state.fileName) : (state.fileName + ' ' + t('reloadHint'));
   renderSpeakers(); renderCtxAuto(); countPlaceholders();
 }
 function toggleLang(){ lang = lang === 'fr' ? 'en' : 'fr'; localStorage.setItem('rescribe_lang', lang); applyI18n(); }
+function effectiveTheme(){ const s=localStorage.getItem('rescribe_theme'); if(s) return s; return matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'; }
+function applyTheme(){ const th=localStorage.getItem('rescribe_theme'); if(th) document.documentElement.setAttribute('data-theme',th); else document.documentElement.removeAttribute('data-theme'); const b=$('themeBtn'); if(b) b.textContent = effectiveTheme()==='dark'?'☀️':'🌙'; }
+function toggleTheme(){ localStorage.setItem('rescribe_theme', effectiveTheme()==='dark'?'light':'dark'); applyTheme(); }
 
 /* ============================ État ============================ */
 const LS = { html:'rescribe_html', file:'rescribe_file', speakers:'rescribe_speakers', settings:'rescribe_settings', meta:'rescribe_meta', templates:'rescribe_templates' };
 const SPK_COLORS = ['#6366f1','#0d9488','#db2777','#ea580c','#0891b2','#65a30d','#9333ea','#dc2626'];
-const state = { player:null, fileName:'', speakers:[], dirty:false, fileHandle:null, autosaveTimer:null, mediaURL:null, saveNudgeHidden:false,
-  meta:{ studyTitle:'', location:'', date:'', transcribedBy:'', custom:[] }, settings:{ step:5, rewindOnPause:1, autosaveMin:2, fontSize:17 } };
+function todayISO(){ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function defaultMeta(){ return { interviewTitle:'', studyTitle:'', mode:'', date:todayISO(), transcribedBy:'', custom:[] }; }
+const state = { player:null, fileName:'', mediaName:'', importedName:'', speakers:[], dirty:false, fileHandle:null, autosaveTimer:null, mediaURL:null, saveNudgeHidden:false, speed:1,
+  meta:defaultMeta(), settings:{ step:5, rewindOnPause:1, autosaveMin:2, fontSize:17 } };
 const $ = id => document.getElementById(id);
 const editor = $('editor');
 function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
 function fmt(s){ if(!isFinite(s)||s<0) s=0; const h=Math.floor(s/3600), m=Math.floor((s%3600)/60), sec=Math.floor(s%60);
   return h>0 ? h+':'+String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0') : m+':'+String(sec).padStart(2,'0'); }
 function mins(s){ return Math.round((s||0)/60)+' min'; }
+function fmtDate(iso){ if(!iso) return ''; const d=new Date(iso+'T00:00'); if(isNaN(d)) return iso; return d.toLocaleDateString(lang==='fr'?'fr-FR':'en-US',{day:'numeric',month:'long',year:'numeric'}); }
 function escapeHtml(s){ return s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 
 /* ============================ Média ============================ */
@@ -539,11 +563,13 @@ function loadMedia(file) {
   state.mediaURL = URL.createObjectURL(file); state.fileName = file.name;
   detachPlayer();
   state.player = isVideo ? videoEl : audioEl;
-  state.player.src = state.mediaURL; state.player.playbackRate = parseFloat($('speed').value); state.player.load();
+  state.player.src = state.mediaURL; state.player.playbackRate = state.speed; state.player.load();
   attachPlayer();
   $('videoToggle').style.display = isVideo ? 'inline-flex' : 'none';
   $('videoBox').classList.remove('show'); $('videoToggle').classList.remove('on');
-  $('fileMeta').textContent = file.name; markDirty();
+  state.mediaName=file.name.replace(/\.[^.]+$/,''); renderFooterName();
+  if(!state.meta.interviewTitle){ state.meta.interviewTitle=state.mediaName; fillCtxInputs(); }
+  $('fileMeta').textContent = state.meta.interviewTitle || file.name; markDirty();
   state.player.addEventListener('error', () => { $('fileMeta').textContent = '⚠︎ ' + file.name; }, { once:true });
 }
 const onMeta = () => { const d = state.player.duration;
@@ -563,7 +589,8 @@ function togglePlay(){ const p=state.player; if(!p) return;
   if(p.paused){ p.play(); }
   else { p.pause(); if(state.settings.rewindOnPause>0) p.currentTime=Math.max(0,p.currentTime-state.settings.rewindOnPause); } }
 function skip(sec){ const p=state.player; if(!p) return; p.currentTime=Math.min(p.duration||0,Math.max(0,p.currentTime+sec)); }
-function applySpeed(){ const v=parseFloat($('speed').value); $('speedVal').textContent=v.toFixed(1)+'×'; if(state.player) state.player.playbackRate=v; }
+function changeSpeed(d){ state.speed=clamp(Math.round((state.speed+d)*10)/10,0.5,2); applySpeed(); }
+function applySpeed(){ $('speedVal').textContent=state.speed.toFixed(1)+'×'; if(state.player) state.player.playbackRate=state.speed; }
 
 const track = $('track'); let scrubbing=false;
 function seekFromEvent(e){ const p=state.player; if(!p||!isFinite(p.duration)) return; const rect=track.getBoundingClientRect();
@@ -573,6 +600,7 @@ window.addEventListener('mousemove',e=>{if(scrubbing)seekFromEvent(e);});
 window.addEventListener('mouseup',()=>scrubbing=false);
 track.addEventListener('touchstart',seekFromEvent,{passive:true});
 track.addEventListener('touchmove',seekFromEvent,{passive:true});
+track.addEventListener('click',()=>{ if(state.player&&isFinite(state.player.duration)) jumpToTurnAtTime(state.player.currentTime); });
 
 /* ============================ Taille du texte ============================ */
 function applyFont(){ editor.style.fontSize = state.settings.fontSize + 'px'; }
@@ -602,6 +630,19 @@ function insertTurn(time, spk){
   if(spk){ el.dataset.spk=spk.id; const nm=document.createElement('span'); nm.className='turn-spk'; nm.style.color=spk.color; nm.textContent=spk.name+' :'; el.appendChild(nm); }
   insertNodeAtCaret(el, true);
 }
+let pauseEl=null;
+function togglePauseMark(){
+  if($('pauseBtn').classList.contains('on')){
+    if(pauseEl && editor.contains(pauseEl)){ pauseEl.scrollIntoView({block:'center'}); const holder=document.createTextNode(''); pauseEl.replaceWith(holder);
+      const r=document.createRange(); r.setStart(holder,0); r.collapse(true); const s=window.getSelection(); s.removeAllRanges(); s.addRange(r); editor.focus(); onEditorChanged(); }
+    pauseEl=null; $('pauseBtn').classList.remove('on');
+  } else {
+    editor.focus();
+    const el=document.createElement('span'); el.className='pause-mark'; el.contentEditable='false';
+    if(state.player){ el.dataset.t=state.player.currentTime; el.textContent='⏸ '+fmt(state.player.currentTime); if(!state.player.paused) state.player.pause(); } else el.textContent='⏸';
+    el.title=t('pauseTitle'); insertNodeAtCaret(el, true); pauseEl=el; $('pauseBtn').classList.add('on');
+  }
+}
 function timecodeFlow(){
   if(!state.player) return; const time=state.player.currentTime;
   if(!state.speakers.length){ insertTurn(time, null); return; }
@@ -609,7 +650,7 @@ function timecodeFlow(){
   items.push({type:'none'});
   showPopup(items, it=> insertTurn(time, it.type==='none'?null:it.spk), caretRect());
 }
-editor.addEventListener('click', e => { const tc=e.target.closest('.tc'); if(tc&&state.player){ const turn=tc.closest('.turn'); const ti=turn?turn.dataset.t:tc.dataset.t; if(ti!=null){ state.player.currentTime=parseFloat(ti); if(state.player.paused) state.player.play(); } } });
+editor.addEventListener('click', e => { const seekEl=e.target.closest('.tc, .pause-mark'); if(seekEl&&state.player){ const turn=seekEl.closest('.turn'); const ti=(turn&&turn.dataset.t)||seekEl.dataset.t; if(ti!=null){ state.player.currentTime=parseFloat(ti); if(state.player.paused) state.player.play(); } } });
 editor.addEventListener('paste', e => {
   e.preventDefault();
   const cd = e.clipboardData || window.clipboardData;
@@ -645,9 +686,15 @@ function cleanPastedFrag(root){
   return frag;
 }
 
+/* ============================ Navigation par repères ============================ */
+function markersSorted(){ return [...editor.querySelectorAll('.turn,.pause-mark')].map(el=>({el,t:parseFloat(el.dataset.t)})).filter(x=>isFinite(x.t)).sort((a,b)=>a.t-b.t); }
+function focusMarker(el){ el.scrollIntoView({block:'center'}); const r=document.createRange(); r.setStartAfter(el); r.collapse(true); const s=window.getSelection(); s.removeAllRanges(); s.addRange(r); el.classList.add('turn-hi'); setTimeout(()=>el.classList.remove('turn-hi'),1200); editor.focus(); }
+function jumpToTurnAtTime(time){ const arr=markersSorted(); if(!arr.length) return; let target=null; for(const x of arr){ if(x.t<=time+0.01) target=x.el; else break; } focusMarker(target||arr[0].el); }
+function jumpToLastMarker(){ const all=editor.querySelectorAll('.turn,.pause-mark'); if(!all.length){ flash(t('noMarks')); return; } focusMarker(all[all.length-1]); }
+
 /* ============================ Annotations à compléter ============================ */
-function countPlaceholders(){ const txt=editor.innerText||''; let n=0; allTags().forEach(tok=>{let i=0;while((i=txt.indexOf(tok,i))!==-1){n++;i+=tok.length;}});
-  const b=$('phCount'); if(n>0){b.style.display='inline-block';b.textContent=n;}else b.style.display='none'; }
+function countPlaceholders(){ const b=$('phCount'); if(!b) return; const txt=editor.innerText||''; let n=0; allTags().forEach(tok=>{let i=0;while((i=txt.indexOf(tok,i))!==-1){n++;i+=tok.length;}});
+  if(n>0){b.style.display='inline-block';b.textContent=n;}else b.style.display='none'; }
 function collectPlaceholders(){ const arr=[]; const walker=document.createTreeWalker(editor,NodeFilter.SHOW_TEXT,null); let node;
   while((node=walker.nextNode())){ const text=node.nodeValue; const local=[];
     allTags().forEach(tok=>{ let idx=text.indexOf(tok); while(idx!==-1){ local.push({node,idx,len:tok.length}); idx=text.indexOf(tok,idx+tok.length);} });
@@ -666,7 +713,7 @@ function jumpPlaceholder(dir){
   const rect=r.getBoundingClientRect(); if(rect.top<90||rect.bottom>innerHeight-90) target.node.parentElement.scrollIntoView({block:'center'}); editor.focus();
 }
 
-/* ============================ Remplacer (texte libre) ============================ */
+/* ============================ Remplacer ============================ */
 function replaceNext(){ const find=$('frFind').value; if(!find) return; const repl=$('frRepl').value; const walker=document.createTreeWalker(editor,NodeFilter.SHOW_TEXT,null); let node;
   while((node=walker.nextNode())){ const idx=node.nodeValue.indexOf(find); if(idx!==-1){ node.nodeValue=node.nodeValue.slice(0,idx)+repl+node.nodeValue.slice(idx+find.length); onEditorChanged(); $('frStatus').textContent='1 ✓'; return; } }
   $('frStatus').textContent=t('notFound'); }
@@ -674,7 +721,7 @@ function replaceAll(){ const find=$('frFind').value; if(!find) return; const rep
   while((node=walker.nextNode())){ if(node.nodeValue.includes(find)){ const parts=node.nodeValue.split(find); count+=parts.length-1; node.nodeValue=parts.join(repl); } }
   if(count) onEditorChanged(); $('frStatus').textContent=count+' ✓'; }
 
-/* ============================ Popup partagé (annotations + choix interlocuteur) ============================ */
+/* ============================ Popup ============================ */
 const spkPop=$('spkPop'); let popState=null;
 function annotItems(query){ query=(query||'').trim(); const ql=query.toLowerCase();
   const base=[...new Set(Object.values(TAGS[lang]).concat(ANNOT.all()))];
@@ -687,8 +734,7 @@ function maybeShowAnnot(){
   const node=sel.anchorNode; if(node.nodeType!==Node.TEXT_NODE) return hidePop();
   const text=node.nodeValue.slice(0,sel.anchorOffset); const m=text.match(/#([\p{L}\p{N} .\-]*)$/u); if(!m) return hidePop();
   const qr={node,start:sel.anchorOffset-m[0].length,end:sel.anchorOffset};
-  const items=annotItems(m[1]);
-  showPopup(items, it=>{ const r=document.createRange(); r.setStart(qr.node,qr.start); r.setEnd(qr.node,qr.end); r.deleteContents();
+  showPopup(annotItems(m[1]), it=>{ const r=document.createRange(); r.setStart(qr.node,qr.start); r.setEnd(qr.node,qr.end); r.deleteContents();
     const s=window.getSelection(); s.removeAllRanges(); s.addRange(r);
     if(it.type==='annot-new'){ const arr=ANNOT.all(); if(!arr.includes(it.label)){ arr.push(it.label); ANNOT.save(arr); } }
     insertText(it.label+' '); }, sel.getRangeAt(0).getBoundingClientRect());
@@ -704,7 +750,11 @@ function showPopup(items, onPick, rect){
     }).join('');
     spkPop.querySelectorAll('.spk-pop-item').forEach(el=>el.addEventListener('mousedown',ev=>{ev.preventDefault();commitPop(parseInt(el.dataset.idx));}));
   }
-  spkPop.style.left=(rect.left+window.scrollX)+'px'; spkPop.style.top=(rect.bottom+window.scrollY+4)+'px'; spkPop.classList.add('show');
+  spkPop.classList.add('show');
+  let top=rect.bottom+4, left=rect.left; const ph=spkPop.offsetHeight, pw=spkPop.offsetWidth;
+  if(top+ph > window.innerHeight-8) top=Math.max(8, rect.top-ph-4);
+  if(left+pw > window.innerWidth-8) left=Math.max(8, window.innerWidth-pw-8);
+  spkPop.style.left=left+'px'; spkPop.style.top=top+'px';
 }
 function hidePop(){ spkPop.classList.remove('show'); popState=null; }
 function commitPop(idx){ if(!popState) return hidePop(); const it=popState.items[idx], cb=popState.onPick; hidePop(); if(it&&cb) cb(it); }
@@ -738,16 +788,15 @@ function computeStats(){
 }
 function renderStats(){ const totals=computeStats(); const ids=Object.keys(totals);
   if(!ids.length){ $('statsBody').innerHTML='<span class="empty-hint">'+t('statsEmpty')+'</span>'; return; }
-  const sum=ids.reduce((a,k)=>a+totals[k],0)||1;
-  ids.sort((a,b)=>totals[b]-totals[a]);
+  const sum=ids.reduce((a,k)=>a+totals[k],0)||1; ids.sort((a,b)=>totals[b]-totals[a]);
   $('statsBody').innerHTML=ids.map(id=>{ const s=state.speakers.find(x=>x.id===id); const name=s?s.name:'?'; const col=s?s.color:'#888'; const sec=totals[id]; const pct=Math.round(sec/sum*100);
     return `<div class="stat-row"><span class="dot" style="background:${col}"></span><span class="stat-nm" style="color:${col}">${escapeHtml(name)}</span><span class="stat-bar"><span style="width:${pct}%;background:${col}"></span></span><span class="stat-val">${fmt(sec)} · ${pct}%</span></div>`;
   }).join('');
 }
 
-/* ============================ Contexte + champs libres + modèles ============================ */
-function bindCtx(id,key){ const el=$(id); el.addEventListener('input',()=>{ state.meta[key]=el.value; if(el.value.trim()) el.classList.remove('req-empty'); renderCtxAuto(); persistMeta(); markDirty(); }); }
-function fillCtxInputs(){ $('mTitle').value=state.meta.studyTitle||''; $('mLoc').value=state.meta.location||''; $('mDate').value=state.meta.date||''; $('mBy').value=state.meta.transcribedBy||''; }
+/* ============================ Contexte + modèles ============================ */
+function bindCtx(id,key){ const el=$(id); el.addEventListener('input',()=>{ state.meta[key]=el.value; if(el.value.trim()) el.classList.remove('req-empty'); if(key==='interviewTitle'&&!state.fileName) $('fileMeta').textContent=el.value||t('noMedia'); renderCtxAuto(); persistMeta(); markDirty(); }); }
+function fillCtxInputs(){ $('mInterview').value=state.meta.interviewTitle||''; $('mStudy').value=state.meta.studyTitle||''; $('mDate').value=state.meta.date||''; $('mBy').value=state.meta.transcribedBy||''; $('mMode').value=state.meta.mode||''; }
 function renderCustomFields(){ const wrap=$('ctxCustom'); wrap.innerHTML=''; (state.meta.custom||[]).forEach((cf,i)=>{
   const row=document.createElement('div'); row.className='ctx-cf';
   row.innerHTML=`<input class="cf-label" type="text" placeholder="${t('fieldLabel')}" value="${escapeHtml(cf.label||'')}"><input class="cf-value" type="text" placeholder="${t('fieldValue')}" value="${escapeHtml(cf.value||'')}"><button aria-label="✕">✕</button>`;
@@ -760,20 +809,21 @@ function addCustomField(){ if(!state.meta.custom) state.meta.custom=[]; state.me
 function renderCtxAuto(){ const L=[]; const spk=state.speakers.map(s=>s.name).join(', '); if(spk) L.push(t('speakers')+' : '+spk);
   if(state.player&&isFinite(state.player.duration)) L.push(t('duration')+' '+fmt(state.player.duration)+' ('+mins(state.player.duration)+')');
   $('ctxAuto').textContent = L.length ? t('autoIncluded')+' — '+L.join(' · ') : t('autoIncludedEmpty'); }
-function missingMeta(){ return REQUIRED_META.filter(k=>!(state.meta[k]&&state.meta[k].trim())); }
-function flagMissingMeta(){ const map={studyTitle:'mTitle',date:'mDate',transcribedBy:'mBy'};
-  REQUIRED_META.forEach(k=>{ const el=$(map[k]); el.classList.toggle('req-empty', !(state.meta[k]&&state.meta[k].trim())); }); }
+function missingMeta(){ return REQUIRED_META.filter(k=>!(state.meta[k]&&String(state.meta[k]).trim())); }
+function flagMissingMeta(){ const map={interviewTitle:'mInterview',date:'mDate',transcribedBy:'mBy'};
+  REQUIRED_META.forEach(k=>{ const el=$(map[k]); el.classList.toggle('req-empty', !(state.meta[k]&&String(state.meta[k]).trim())); }); }
 
 const TPL = { all(){ try{ return JSON.parse(localStorage.getItem(LS.templates)||'[]'); }catch{ return []; } }, save(a){ localStorage.setItem(LS.templates, JSON.stringify(a)); } };
 function renderTemplateSelect(){ const arr=TPL.all(); const sel=$('tplSelect'); const prev=sel.value;
   sel.innerHTML='<option value="">'+t('templatesPlaceholder')+'</option>'+arr.map(tp=>`<option value="${tp.id}">${escapeHtml(tp.name)}</option>`).join('');
   if(prev && [...sel.options].some(o=>o.value===prev)) sel.value=prev; }
-function saveTemplate(){ const name=prompt(t('templateName'), state.meta.studyTitle||''); if(name===null) return; const nm=name.trim(); if(!nm) return;
-  const arr=TPL.all(); arr.push({ id:'t'+Date.now().toString(36), name:nm, meta:JSON.parse(JSON.stringify(state.meta)), speakers:state.speakers.map(s=>Object.assign({},s)) });
+function saveTemplate(){ const name=prompt(t('templateName'), state.meta.studyTitle||state.meta.interviewTitle||''); if(name===null) return; const nm=name.trim(); if(!nm) return;
+  const meta=JSON.parse(JSON.stringify(state.meta)); meta.interviewTitle=''; // le titre d'entretien reste spécifique, pas dans le modèle
+  const arr=TPL.all(); arr.push({ id:'t'+Date.now().toString(36), name:nm, meta, speakers:state.speakers.map(s=>Object.assign({},s)) });
   TPL.save(arr); renderTemplateSelect(); $('tplSelect').value=arr[arr.length-1].id; flash(t('templateSaved')); }
 function applyTemplate(id){ const tp=TPL.all().find(x=>x.id===id); if(!tp) return;
-  state.meta=Object.assign({studyTitle:'',location:'',date:'',transcribedBy:'',custom:[]}, JSON.parse(JSON.stringify(tp.meta||{})));
-  if(!state.meta.custom) state.meta.custom=[];
+  const keepInterview=state.meta.interviewTitle;
+  state.meta=Object.assign(defaultMeta(), JSON.parse(JSON.stringify(tp.meta||{}))); state.meta.interviewTitle=keepInterview; if(!state.meta.date) state.meta.date=todayISO(); if(!state.meta.custom) state.meta.custom=[];
   if(tp.speakers&&tp.speakers.length) state.speakers=tp.speakers.map(s=>Object.assign({},s));
   fillCtxInputs(); renderCustomFields(); flagMissingMeta(); renderSpeakers(); renderCtxAuto(); persistMeta(); markDirty(); flash(t('templateApplied')); }
 function deleteTemplate(){ const id=$('tplSelect').value; if(!id){ flash(t('templateNone')); return; } TPL.save(TPL.all().filter(x=>x.id!==id)); renderTemplateSelect(); }
@@ -790,19 +840,19 @@ function markDirty(){ state.dirty=true; $('saveDot').className='save-dot dirty';
 function onEditorChanged(){ togglePlaceholder(); countPlaceholders(); markDirty(); }
 function persistMeta(){ localStorage.setItem(LS.file,state.fileName); localStorage.setItem(LS.speakers,JSON.stringify(state.speakers));
   localStorage.setItem(LS.settings,JSON.stringify(state.settings)); localStorage.setItem(LS.meta,JSON.stringify(state.meta)); }
-function serializeProject(){ return { format:'rescribe', version:VERSION, savedAt:new Date().toISOString(), fileName:state.fileName, meta:state.meta, speakers:state.speakers, settings:state.settings, html:editor.innerHTML }; }
+function serializeProject(){ return { format:'rescribe', version:VERSION, savedAt:new Date().toISOString(), fileName:state.fileName, importedName:state.importedName, meta:state.meta, speakers:state.speakers, settings:state.settings, html:editor.innerHTML }; }
 function loadProject(data){ if(data.html!=null){ editor.innerHTML=data.html; rebindAfterLoad(); } state.speakers=data.speakers||[];
-  state.fileName=data.fileName||'';
-  if(data.meta){ state.meta=Object.assign({studyTitle:'',location:'',date:'',transcribedBy:'',custom:[]}, data.meta); if(!state.meta.custom) state.meta.custom=[]; }
+  state.fileName=data.fileName||''; state.importedName=data.importedName||''; renderFooterName();
+  if(data.meta){ state.meta=Object.assign(defaultMeta(), data.meta); if(!state.meta.custom) state.meta.custom=[]; if(!state.meta.date) state.meta.date=todayISO(); }
   if(data.settings) state.settings=Object.assign(state.settings,data.settings);
   $('stepSel').value=state.settings.step; $('rwSel').value=state.settings.rewindOnPause; applyFont(); fillCtxInputs(); renderCustomFields();
   renderSpeakers(); renderCtxAuto(); countPlaceholders();
-  if(state.fileName) $('fileMeta').textContent=state.fileName+' '+t('reloadHint'); markDirty(); }
+  $('fileMeta').textContent = state.meta.interviewTitle || (state.fileName? state.fileName+' '+t('reloadHint') : t('noMedia')); markDirty(); }
 
 const HAS_FS='showSaveFilePicker' in window;
 async function connectSaveFile(){ if(!HAS_FS){ flash(t('fsUnsupported')); return; }
-  try{ state.fileHandle=await window.showSaveFilePicker({ suggestedName:(state.fileName.replace(/\.[^.]+$/,'')||'transcript')+'.rescribe.json', types:[{description:'Rescribe project',accept:{'application/json':['.json']}}] });
-    await writeToDisk(); startAutosaveTimer(); $('connectFileBtn').innerHTML='💾 ✓ '+state.settings.autosaveMin+' min'; $('connectFileBtn').classList.add('primary'); flash(t('fsEnabled',state.settings.autosaveMin)); maybeShowSaveNudge();
+  try{ state.fileHandle=await window.showSaveFilePicker({ suggestedName:exportBase()+'.rescribe.json', types:[{description:'Rescribe project',accept:{'application/json':['.json']}}] });
+    await writeToDisk(); startAutosaveTimer(); $('connectFileBtn').innerHTML='💾 ✓'; $('connectFileBtn').classList.add('primary'); flash(t('fsEnabled')); maybeShowSaveNudge();
   }catch(e){} }
 async function writeToDisk(){ if(!state.fileHandle) return false;
   try{ const w=await state.fileHandle.createWritable(); await w.write(JSON.stringify(serializeProject(),null,2)); await w.close();
@@ -811,9 +861,12 @@ async function writeToDisk(){ if(!state.fileHandle) return false;
 function startAutosaveTimer(){ clearInterval(state.autosaveTimer); state.autosaveTimer=setInterval(()=>{ if(state.dirty) writeToDisk(); }, state.settings.autosaveMin*60000); }
 
 /* ============================ Export ============================ */
+function exportBase(){ return (state.meta.interviewTitle||state.meta.studyTitle||state.fileName.replace(/\.[^.]+$/,'')||'transcript').replace(/[\/\\:*?"<>|]/g,'-').trim()||'transcript'; }
 function buildHeaderLines(){ const L=[], m=state.meta;
+  if(m.interviewTitle) L.push(m.interviewTitle);
   if(m.studyTitle) L.push(m.studyTitle);
-  const l2=[m.location,m.date].filter(Boolean).join(' · '); if(l2) L.push(l2);
+  const modeTxt = m.mode==='visio'?t('modeVisio'):m.mode==='presentiel'?t('modePresentiel'):'';
+  const l3=[modeTxt, fmtDate(m.date)].filter(Boolean).join(' · '); if(l3) L.push(l3);
   if(m.transcribedBy) L.push(t('transcribedBy')+' : '+m.transcribedBy);
   (m.custom||[]).forEach(c=>{ if(c.value&&c.value.trim()) L.push((c.label&&c.label.trim()?c.label.trim()+' : ':'')+c.value.trim()); });
   const spk=state.speakers.map(s=>s.name+(s.role?' ('+s.role+')':'')+(s.interviewer?' — '+t('interviewer'):'')).join(', ');
@@ -821,6 +874,7 @@ function buildHeaderLines(){ const L=[], m=state.meta;
   if(state.player&&isFinite(state.player.duration)) L.push(t('duration')+' '+fmt(state.player.duration)+' ('+mins(state.player.duration)+')');
   return L; }
 function buildPlainText(md){ const clone=editor.cloneNode(true);
+  clone.querySelectorAll('.pause-mark').forEach(pm=>pm.replaceWith(document.createTextNode('\n'+pm.textContent+'\n')));
   clone.querySelectorAll('.turn').forEach(tn=>{ const tc=tn.querySelector('.tc'); const sp=tn.querySelector('.turn-spk');
     const label='['+(tc?tc.textContent:'')+']'+(sp?' '+sp.textContent.trim():''); tn.replaceWith(document.createTextNode('\n'+(md?'**'+label+'**':label)+' ')); });
   clone.querySelectorAll('.tc').forEach(tc=>tc.replaceWith(document.createTextNode('['+tc.textContent+'] ')));
@@ -831,14 +885,14 @@ function buildPlainText(md){ const clone=editor.cloneNode(true);
   return head+body; }
 function buildHtml(){ const H=buildHeaderLines();
   const head = H.length ? '<header>'+H.map((l,i)=>i===0?`<h1>${escapeHtml(l)}</h1>`:`<p>${escapeHtml(l)}</p>`).join('')+'</header><hr>' : '';
-  return `<!doctype html><meta charset="utf-8"><title>${escapeHtml(state.meta.studyTitle||state.fileName||'Transcript')}</title>
-<style>body{font:16px/1.7 -apple-system,sans-serif;max-width:740px;margin:40px auto;padding:0 20px;color:#1b1b19}header p{color:#555;margin:2px 0}.tc{font:600 .8em monospace;color:#5b54d6}.turn-spk{font-weight:700;margin-left:5px}hr{border:none;border-top:1px solid #ddd;margin:18px 0}</style>
+  return `<!doctype html><meta charset="utf-8"><title>${escapeHtml(exportBase())}</title>
+<style>body{font:16px/1.7 -apple-system,sans-serif;max-width:740px;margin:40px auto;padding:0 20px;color:#1b1b19}header p{color:#555;margin:2px 0}.tc{font:600 .8em monospace;color:#5b54d6}.turn-spk{font-weight:700;margin-left:5px}.pause-mark{font:600 .8em monospace;color:#b45309}hr{border:none;border-top:1px solid #ddd;margin:18px 0}</style>
 ${head}<article>${editor.innerHTML}</article>`; }
 function download(filename,text,mime){ const blob=new Blob([text],{type:(mime||'text/plain')+';charset=utf-8'}); const url=URL.createObjectURL(blob);
   const a=document.createElement('a'); a.href=url; a.download=filename; a.click(); setTimeout(()=>URL.revokeObjectURL(url),1000); }
 function doExport(kind){
   if(kind!=='otr'){ const miss=missingMeta(); if(miss.length){ $('ctxPanel').classList.remove('collapsed'); $('ctxCaret').textContent='▾'; flagMissingMeta(); $('ctxPanel').scrollIntoView({block:'center'}); flash(t('fillContext')); return; } }
-  const base=(state.meta.studyTitle||state.fileName.replace(/\.[^.]+$/,'')||'transcript').replace(/[\/\\:*?"<>|]/g,'-');
+  const base=exportBase();
   if(kind==='txt') download(base+'.txt',buildPlainText(false),'text/plain');
   if(kind==='md') download(base+'.md',buildPlainText(true),'text/markdown');
   if(kind==='html') download(base+'.html',buildHtml(),'text/html');
@@ -848,8 +902,12 @@ function doExport(kind){
 const IMPORT_ACCEPT={ project:'.json,.otr,.rescribe.json', text:'.txt', markdown:'.md,.markdown', html:'.html,.htm', office:'.docx,.odt,.doc' };
 function appendEditorHtml(html){ if((editor.textContent||'').trim()!=='') editor.insertAdjacentHTML('beforeend','<div><br></div>'); editor.insertAdjacentHTML('beforeend', html); rebindAfterLoad(); onEditorChanged(); }
 function setEditorText(text){ appendEditorHtml(text.split('\n').map(l=>'<div>'+(escapeHtml(l)||'&#8203;')+'</div>').join('')); }
+function renderFooterName(){ $('importedName').textContent = state.mediaName || state.importedName || ''; }
+function noteImported(file){ state.importedName=file.name.replace(/\.[^.]+$/,''); renderFooterName();
+  if(!state.meta.interviewTitle){ state.meta.interviewTitle=state.importedName; fillCtxInputs(); if(!state.fileName) $('fileMeta').textContent=state.meta.interviewTitle; persistMeta(); } }
 function importText(kind){ const inp=$('textInput'); inp.accept=IMPORT_ACCEPT[kind]||'';
   inp.onchange=()=>{ const file=inp.files[0]; inp.value=''; if(!file) return;
+    if(kind!=='project') noteImported(file);
     if(kind==='office'){ importOffice(file); return; }
     const reader=new FileReader();
     reader.onload=()=>{ const content=reader.result;
@@ -886,7 +944,22 @@ async function zipEntryText(file, entryName){
   else { const ds=new DecompressionStream('deflate-raw'); const stream=new Blob([comp]).stream().pipeThrough(ds); bytes=new Uint8Array(await new Response(stream).arrayBuffer()); }
   return new TextDecoder('utf-8').decode(bytes);
 }
-function rebindAfterLoad(){ editor.querySelectorAll('.tc, .turn').forEach(el=>el.contentEditable='false'); countPlaceholders(); togglePlaceholder(); }
+function rebindAfterLoad(){ editor.querySelectorAll('.tc, .turn, .pause-mark').forEach(el=>el.contentEditable='false'); countPlaceholders(); togglePlaceholder(); }
+
+/* ============================ Reset ============================ */
+function resetAll(){ if(!confirm(t('resetConfirm'))) return;
+  detachPlayer(); if(state.mediaURL) URL.revokeObjectURL(state.mediaURL); state.mediaURL=null; state.player=null; state.fileHandle=null; clearInterval(state.autosaveTimer);
+  state.speakers=[]; state.fileName=''; state.mediaName=''; state.importedName=''; state.meta=defaultMeta(); state.dirty=false; pauseEl=null; $('pauseBtn').classList.remove('on');
+  editor.innerHTML='';
+  [LS.html,LS.meta,LS.speakers,LS.file].forEach(k=>localStorage.removeItem(k));
+  $('connectFileBtn').classList.remove('primary'); $('connectFileBtn').innerHTML='💾 <span data-i18n="autosave"></span>';
+  renderFooterName(); $('saveNudge').classList.remove('show'); state.saveNudgeHidden=false;
+  enableTransport(false); $('durTime').textContent='0:00'; $('curTime').textContent='0:00'; $('pctTime').textContent='0%'; $('fill').style.width='0'; $('head').style.left='0';
+  [0,1,2,3,4].forEach(i=>$('q'+i).textContent=(i===0||i===4)?'0:00':'·'); $('videoToggle').style.display='none';
+  fillCtxInputs(); renderCustomFields(); renderSpeakers(); renderCtxAuto(); countPlaceholders(); togglePlaceholder();
+  $('saveDot').className='save-dot'; $('saveText').textContent='—';
+  applyI18n(); flash(t('resetDone'));
+}
 
 /* ============================ Raccourcis ============================ */
 document.addEventListener('keydown', e => {
@@ -894,9 +967,9 @@ document.addEventListener('keydown', e => {
     if(e.key==='ArrowDown'){e.preventDefault();return popNavigate(1);}
     if(e.key==='ArrowUp'){e.preventDefault();return popNavigate(-1);}
     if(e.key==='Enter'||e.key==='Tab'){e.preventDefault();return commitPop(popState.active);}
-    if(e.key==='Escape'){e.preventDefault();return hidePop();}
+    if(e.key!=='Escape' && e.key.length===1 && !e.metaKey && !e.ctrlKey){ hidePop(); }
   }
-  if(e.key==='Escape'){e.preventDefault();return togglePlay();}
+  if(e.key==='Escape'){e.preventDefault(); hidePop(); return togglePlay();}
   if(e.key==='F1'){e.preventDefault();return skip(-state.settings.step);}
   if(e.key==='F2'){e.preventDefault();return skip(state.settings.step);}
   const mod=e.metaKey||e.ctrlKey; if(!mod) return; const k=e.key.toLowerCase();
@@ -907,15 +980,20 @@ document.addEventListener('keydown', e => {
 
 /* ============================ UI ============================ */
 $('langBtn').onclick=toggleLang;
+$('themeBtn').onclick=toggleTheme;
 $('fontDown').onclick=()=>changeFont(-1); $('fontUp').onclick=()=>changeFont(1);
+const scroller=document.querySelector('main.content');
+scroller.addEventListener('scroll',()=>{ $('toTop').classList.toggle('show', scroller.scrollTop>300); });
+$('toTop').onclick=()=>scroller.scrollTo({top:0,behavior:'smooth'});
 $('playBtn').onclick=togglePlay; $('rewBtn').onclick=()=>skip(-state.settings.step); $('fwdBtn').onclick=()=>skip(state.settings.step);
-$('speed').oninput=applySpeed;
+$('speedDown').onclick=()=>changeSpeed(-0.1); $('speedUp').onclick=()=>changeSpeed(0.1);
 $('stepSel').onchange=()=>{ state.settings.step=parseInt($('stepSel').value); persistMeta(); };
 $('rwSel').onchange=()=>{ state.settings.rewindOnPause=parseInt($('rwSel').value); persistMeta(); };
 $('videoToggle').onclick=()=>{ const on=$('videoBox').classList.toggle('show'); $('videoToggle').classList.toggle('on',on); };
-$('tcBtn').onclick=()=>{ editor.focus(); timecodeFlow(); };
-$('insAnnotBtn').onclick=()=>{ editor.focus(); const r=getRange(); r.deleteContents(); const n=document.createTextNode('#'); r.insertNode(n); const rr=document.createRange(); rr.setStart(n,1); rr.collapse(true); const s=window.getSelection(); s.removeAllRanges(); s.addRange(rr); onEditorChanged(); maybeShowAnnot(); };
-$('prevPhBtn').onclick=()=>jumpPlaceholder(-1); $('nextPhBtn').onclick=()=>jumpPlaceholder(1);
+$('tcBtn').addEventListener('mousedown', e=>{ e.preventDefault(); e.stopPropagation(); editor.focus(); timecodeFlow(); });
+$('insAnnotBtn').addEventListener('mousedown', e=>{ e.preventDefault(); e.stopPropagation(); editor.focus(); const r=getRange(); r.deleteContents(); const n=document.createTextNode('#'); r.insertNode(n); const rr=document.createRange(); rr.setStart(n,1); rr.collapse(true); const s=window.getSelection(); s.removeAllRanges(); s.addRange(rr); onEditorChanged(); maybeShowAnnot(); });
+$('pauseBtn').addEventListener('mousedown', e=>{ e.preventDefault(); togglePauseMark(); });
+$('lastTcBtn').onclick=jumpToLastMarker;
 $('frToggle').onclick=()=>$('frBar').classList.toggle('show');
 $('frNext').onclick=replaceNext; $('frAll').onclick=replaceAll;
 $('spkAdd').onclick=addSpeaker;
@@ -923,7 +1001,8 @@ $('spkName').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault
 $('spkRole').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();addSpeaker();}});
 $('spkHead').onclick=()=>{ $('spkPanel').classList.toggle('collapsed'); $('spkCaret').textContent=$('spkPanel').classList.contains('collapsed')?'▸':'▾'; };
 $('ctxHead').onclick=()=>{ $('ctxPanel').classList.toggle('collapsed'); $('ctxCaret').textContent=$('ctxPanel').classList.contains('collapsed')?'▸':'▾'; };
-bindCtx('mTitle','studyTitle'); bindCtx('mLoc','location'); bindCtx('mDate','date'); bindCtx('mBy','transcribedBy');
+bindCtx('mInterview','interviewTitle'); bindCtx('mStudy','studyTitle'); bindCtx('mDate','date'); bindCtx('mBy','transcribedBy');
+$('mMode').onchange=()=>{ state.meta.mode=$('mMode').value; persistMeta(); markDirty(); };
 $('ctxAddField').onclick=addCustomField;
 $('tplSave').onclick=saveTemplate; $('tplDelete').onclick=deleteTemplate;
 $('tplSelect').onchange=()=>{ if($('tplSelect').value) applyTemplate($('tplSelect').value); };
@@ -932,6 +1011,7 @@ $('mediaInput').onchange=e=>{ if(e.target.files[0]) loadMedia(e.target.files[0])
 $('connectFileBtn').onclick=connectSaveFile;
 $('snConfig').onclick=async ()=>{ await connectSaveFile(); maybeShowSaveNudge(); };
 $('snIgnore').onclick=()=>{ state.saveNudgeHidden=true; maybeShowSaveNudge(); };
+$('resetBtn').onclick=resetAll;
 editor.addEventListener('keydown',e=>{ if(e.key==='@' && !e.metaKey && state.player){ e.preventDefault(); timecodeFlow(); } });
 editor.addEventListener('input',()=>{ onEditorChanged(); maybeShowAnnot(); });
 editor.addEventListener('keyup',e=>{ if(spkPop.classList.contains('show')) return; if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)) maybeShowAnnot(); });
@@ -939,6 +1019,7 @@ editor.addEventListener('blur',()=>setTimeout(hidePop,150));
 
 function setupDropdown(id){ const dd=$(id); dd.querySelector('.btn').addEventListener('click',e=>{ e.stopPropagation(); document.querySelectorAll('.dd').forEach(d=>d!==dd&&d.classList.remove('open')); dd.classList.toggle('open'); }); }
 setupDropdown('importDd'); setupDropdown('exportDd');
+document.addEventListener('mousedown', e=>{ if(spkPop.classList.contains('show') && !spkPop.contains(e.target)) hidePop(); });
 document.addEventListener('click',()=>document.querySelectorAll('.dd').forEach(d=>d.classList.remove('open')));
 document.querySelectorAll('[data-export]').forEach(b=>b.onclick=()=>doExport(b.dataset.export));
 document.querySelectorAll('[data-import]').forEach(b=>b.onclick=()=>importText(b.dataset.import));
@@ -963,12 +1044,12 @@ function flash(msg){ if(!toastEl){ toastEl=document.createElement('div'); toastE
 (function restore(){
   try{
     const set=JSON.parse(localStorage.getItem(LS.settings)||'null'); if(set){ state.settings=Object.assign(state.settings,set); $('stepSel').value=state.settings.step; $('rwSel').value=state.settings.rewindOnPause; }
-    const meta=JSON.parse(localStorage.getItem(LS.meta)||'null'); if(meta){ state.meta=Object.assign(state.meta,meta); if(!state.meta.custom) state.meta.custom=[]; }
+    const meta=JSON.parse(localStorage.getItem(LS.meta)||'null'); if(meta){ state.meta=Object.assign(defaultMeta(),meta); if(!state.meta.custom) state.meta.custom=[]; if(!state.meta.date) state.meta.date=todayISO(); }
     state.speakers=JSON.parse(localStorage.getItem(LS.speakers)||'[]');
     const html=localStorage.getItem(LS.html); if(html){ editor.innerHTML=html; rebindAfterLoad(); }
     state.fileName=localStorage.getItem(LS.file)||'';
   }catch(e){ console.warn('restore',e); }
-  applyFont(); fillCtxInputs(); applyI18n(); applySpeed();
+  applyFont(); fillCtxInputs(); applyTheme(); applyI18n(); applySpeed();
   if(!HAS_FS) $('connectFileBtn').title='Chrome/Edge required — use “Export”';
 })();
 

@@ -10,7 +10,7 @@ Deployable to GitHub Pages (or any static host) and installable as an offline PW
 - Audio/video player with speed control (0.5×–2×) and adjustable skip step (2 / 5 / 10 s).
 - **Audio-first**: when the source is a video, the picture is hidden by default; a toggle reveals it.
 - **Pause-rewind**: pressing Esc (or the play button) to pause rewinds a configurable 0 / 1 / 2 s, so you resume just before where you stopped.
-- **Progress bar** with elapsed/total time, percentage, and quarter milestones (0 / 25 / 50 / 75 / 100 %), each shown both as a timestamp and in raw minutes. Click or drag to seek.
+- **Progress bar** with elapsed/total time, percentage, and milestones at quarters and thirds. Click or drag to seek — clicking also jumps the text to the matching timecode. A **Last TC** button jumps to the most recent marker.
 
 ### Editing
 - **Timecoded speaker turns**: press <kbd>⌘J</kbd> (or the Timecode button), pick who's speaking, and a single clickable `[12:34] Name` item is inserted. Click the timecode to jump playback there. Defining no speaker (or having none) inserts a plain timecode.
@@ -18,10 +18,11 @@ Deployable to GitHub Pages (or any static host) and installable as an offline PW
 - **Annotations**: type `#` (or the Annotation button) to insert `[cut]` / `[coupé]`, `[inaudible]`, `[redacted]`. Jump to the next/previous annotation to fill, and a counter shows how many remain.
 - **Replace** free text (find → replace, next / all).
 - **Paste as plain text**: pasting a transcript strips all formatting (clean import from web AI tools).
+- **Pause markers** to bookmark where you stopped, and a **Reset** button to start a fresh transcription.
 - **Adjustable body text size** (A− / A+) for long sessions.
 
 ### Context & reuse
-- **Context header** (required before exporting document files): study title, location/call, date, transcribed-by, plus any number of **custom free fields**. Speakers and recording duration are added automatically. It becomes the header of every exported document.
+- **Context header** (required before exporting document files): interview title (also the export filename) and study title, a date picker (defaults to today), a Video call / In person switch, transcribed-by, plus any number of **custom free fields**. Speakers and recording duration are added automatically. It becomes the header of every exported document.
 - **Context templates**: save the current context + speakers under a name and reapply it to the next transcript in one click.
 
 ### Saving
@@ -77,6 +78,20 @@ Upload the files to a repo (web UI or git), then *Settings → Pages → Branch 
 The service worker is **network-first for the app shell**, so a redeploy is picked up automatically when online — no hard-refresh or cache-version bump needed.
 
 ## Changelog
+
+### v1.3.0
+- **Compact merged top bar**: brand, transport, speed (− / +), and progress in one bar that always stays fixed (only the middle scrolls). Font size, language, help, theme toggle, and the **New transcription** button moved to the bottom bar.
+- **Light / dark theme toggle** (overrides the system preference), and a **back-to-top** button.
+- **Pause** is now a toggle: press it to bookmark where you stopped (media pauses), press again to jump back and resume.
+- Loaded media filename shown in the bottom bar; **Save** sits next to **Export**; **Find & replace** button relabeled; the redundant next/previous buttons removed.
+- **Context revamp**: separate **interview title** (used for the export filename) and study title; **date** as a calendar picker defaulting to today; location replaced by a **Video call / In person** switch; free custom fields kept.
+- **Timecode navigation**: click the progress bar to jump to the matching timecode in the text (the one just before that point), plus a **Last TC** button to jump to the most recent marker.
+- **Pause markers** to bookmark where you stopped transcribing.
+- **Milestones** at 1/3 and 2/3 in addition to the quarters.
+- Typing `@` also inserts a timecode + speaker; the ⌘J speaker popup anchors under the caret; **Esc** now always plays/pauses even while the popup is open (it closes it too).
+- Imports **append** below existing text; copy-paste **preserves timecodes**; external paste keeps spacing (e.g. after a colon).
+- Continuous save writes on **every change**; version and build date shown in Help.
+- Imported filename shown (without extension) in the bottom bar.
 
 ### v1.0.0
 - Typing `@` is now an alias for ⌘J (timecode + speaker).

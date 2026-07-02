@@ -1,6 +1,6 @@
 'use strict';
 
-const CACHE = 'rescribe-v9';
+const CACHE = 'rescribe-v11';
 const SHELL = ['./', './index.html', './icon.svg', './manifest.json'];
 
 self.addEventListener('install', e => {
