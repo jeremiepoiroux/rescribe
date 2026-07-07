@@ -199,8 +199,9 @@ select.mini { font-family: inherit; font-size: .78rem; padding: 4px 6px; border-
 .footer { flex: 0 0 auto; background: var(--surf); border-top: 1px solid var(--border); padding: 12px 0; z-index: 20; }
 .to-top { position: fixed; right: 18px; bottom: 76px; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-strong); background: var(--surf); color: var(--text); font-size: 1.15rem; box-shadow: var(--shadow); display: none; z-index: 50; align-items: center; justify-content: center; }
 .to-top.show { display: inline-flex; }
-.footer-inner { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.footer .icon-btn { display: inline-flex; align-items: center; justify-content: center; min-width: 32px; height: 32px; padding: 0 8px; border-radius: 8px; border: 1px solid var(--border); background: var(--surf); color: var(--text); font-size: .82rem; font-weight: 600; }
+.footer-inner { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.footer .btn { padding: 6px 10px; font-size: .8rem; gap: 5px; }
+.footer .icon-btn { display: inline-flex; align-items: center; justify-content: center; min-width: 30px; height: 30px; padding: 0 6px; border-radius: 8px; border: 1px solid var(--border); background: var(--surf); color: var(--text); font-size: .82rem; font-weight: 600; }
 .footer .icon-btn:hover { background: var(--surf2); border-color: var(--border-strong); }
 .font-ctl { display: flex; gap: 3px; }
 .imported-name { font-size: .78rem; color: var(--faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px; }
@@ -405,6 +406,8 @@ select.mini { font-family: inherit; font-size: .78rem; padding: 4px 6px; border-
     </table>
     <p class="sub" style="margin:18px 0 6px;color:var(--text);font-weight:500"><span data-i18n="stats"></span> <span class="hint" style="font-weight:400;color:var(--faint)" data-i18n="statsHint"></span></p>
     <div id="statsBody"></div>
+    <p class="sub" style="margin:18px 0 6px;color:var(--text);font-weight:500"><span data-i18n="workTitle"></span> <span class="hint" style="font-weight:400;color:var(--faint)" data-i18n="workHint"></span></p>
+    <div id="workInfo" style="font-size:.9rem"></div>
     <p class="credit" id="versionLine"></p>
   </div>
 </div>
@@ -412,7 +415,7 @@ select.mini { font-family: inherit; font-size: .78rem; padding: 4px 6px; border-
 <script>
 'use strict';
 const VERSION = '1.3.0';
-const BUILD = '2026-07-02 15:00';
+const BUILD = '2026-07-07 18:05';
 const REPO_URL = 'https://github.com/jeremiepoiroux/rescribe';
 
 /* ============================ i18n ============================ */
@@ -435,6 +438,7 @@ const I18N = {
     speakersEmptyHtml:"Aucun interlocuteur. Ajoute un nom (coche « Intervieweur » pour l'enquêteur). Ensuite <kbd>⌘J</kbd> ou <kbd>@</kbd> insère un timecode et fait choisir qui parle.",
     noSpeaker:"— sans interlocuteur —",
     stats:"Statistiques", statsHint:"— temps de parole par interlocuteur", statsEmpty:"Pose des timecodes (⌘J) en attribuant les interlocuteurs pour voir les temps de parole.",
+    workTitle:"Temps de travail", workHint:"— temps actif estimé, hors longues pauses", workTime:"Temps passé sur la retranscription", workRatioSuffix:"la durée de l'entretien", workNoData:"charge le média pour le ratio",
     context:"Contexte", contextHint:"— obligatoire, apparaît en en-tête des exports",
     interviewTitle:"Titre de l'entretien", studyTitle:"Titre de l'étude", date:"Date de l'entretien", transcribedBy:"Retranscrit par",
     mode:"Format", modeNone:"—", modeVisio:"Visio", modePresentiel:"Présentiel",
@@ -481,6 +485,7 @@ const I18N = {
     speakersEmptyHtml:"No speakers yet. Add a name (tick “Interviewer” for the interviewer). Then <kbd>⌘J</kbd> or <kbd>@</kbd> inserts a timecode and lets you pick who's speaking.",
     noSpeaker:"— no speaker —",
     stats:"Statistics", statsHint:"— talk time per speaker", statsEmpty:"Add timecodes (⌘J) attributing speakers to see talk time.",
+    workTitle:"Working time", workHint:"— estimated active time, excluding long breaks", workTime:"Time spent transcribing", workRatioSuffix:"the interview duration", workNoData:"load the media for the ratio",
     context:"Context", contextHint:"— required, shown in the export header",
     interviewTitle:"Interview title", studyTitle:"Study title", date:"Interview date", transcribedBy:"Transcribed by",
     mode:"Format", modeNone:"—", modeVisio:"Video call", modePresentiel:"In person",
@@ -535,7 +540,7 @@ function applyI18n() {
 }
 function toggleLang(){ lang = lang === 'fr' ? 'en' : 'fr'; localStorage.setItem('rescribe_lang', lang); applyI18n(); }
 function effectiveTheme(){ const s=localStorage.getItem('rescribe_theme'); if(s) return s; return matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'; }
-function applyTheme(){ const th=localStorage.getItem('rescribe_theme'); if(th) document.documentElement.setAttribute('data-theme',th); else document.documentElement.removeAttribute('data-theme'); const b=$('themeBtn'); if(b) b.textContent = effectiveTheme()==='dark'?'☀️':'🌙'; }
+function applyTheme(){ const th=localStorage.getItem('rescribe_theme'); if(th) document.documentElement.setAttribute('data-theme',th); else document.documentElement.removeAttribute('data-theme'); const b=$('themeBtn'); if(b) b.textContent = effectiveTheme()==='dark'?'🌙':'☀️'; }
 function toggleTheme(){ localStorage.setItem('rescribe_theme', effectiveTheme()==='dark'?'light':'dark'); applyTheme(); }
 
 /* ============================ État ============================ */
@@ -543,7 +548,7 @@ const LS = { html:'rescribe_html', file:'rescribe_file', speakers:'rescribe_spea
 const SPK_COLORS = ['#6366f1','#0d9488','#db2777','#ea580c','#0891b2','#65a30d','#9333ea','#dc2626'];
 function todayISO(){ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
 function defaultMeta(){ return { interviewTitle:'', studyTitle:'', mode:'', date:todayISO(), transcribedBy:'', custom:[] }; }
-const state = { player:null, fileName:'', mediaName:'', importedName:'', speakers:[], dirty:false, fileHandle:null, autosaveTimer:null, mediaURL:null, saveNudgeHidden:false, speed:1,
+const state = { player:null, fileName:'', mediaName:'', importedName:'', speakers:[], dirty:false, fileHandle:null, autosaveTimer:null, mediaURL:null, saveNudgeHidden:false, speed:1, workSeconds:0,
   meta:defaultMeta(), settings:{ step:5, rewindOnPause:1, autosaveMin:2, fontSize:17 } };
 const $ = id => document.getElementById(id);
 const editor = $('editor');
@@ -577,7 +582,7 @@ const onMeta = () => { const d = state.player.duration;
   [0,1,2,3,4].forEach(i=>{ $('q'+i).textContent=fmt(d*i/4); });
   enableTransport(true); updateProgress(); renderCtxAuto(); flash(t('mediaLoaded', state.fileName, fmt(d))); maybeShowSaveNudge(); };
 function maybeShowSaveNudge(){ $('saveNudge').classList.toggle('show', HAS_FS && !state.fileHandle && !state.saveNudgeHidden && !!(state.player && state.player.src)); }
-const onTime = () => updateProgress();
+const onTime = () => { updateProgress(); tickWork(); };
 const onPlay = () => $('playBtn').textContent = '❚❚';
 const onPause = () => $('playBtn').textContent = '▶';
 function attachPlayer(){ const p=state.player; p.addEventListener('loadedmetadata',onMeta); p.addEventListener('timeupdate',onTime); p.addEventListener('play',onPlay); p.addEventListener('pause',onPause); p.addEventListener('ended',onPause); }
@@ -829,6 +834,12 @@ function applyTemplate(id){ const tp=TPL.all().find(x=>x.id===id); if(!tp) retur
 function deleteTemplate(){ const id=$('tplSelect').value; if(!id){ flash(t('templateNone')); return; } TPL.save(TPL.all().filter(x=>x.id!==id)); renderTemplateSelect(); }
 
 /* ============================ Sauvegarde ============================ */
+const WORK_IDLE=120000; let workLastTick=Date.now(), workLastSave=0;
+function tickWork(){ const now=Date.now(); const gap=now-workLastTick; if(gap>0&&gap<WORK_IDLE) state.workSeconds+=gap/1000; workLastTick=now;
+  if(now-workLastSave>15000){ workLastSave=now; try{ localStorage.setItem('rescribe_work', String(Math.round(state.workSeconds))); }catch(e){} } }
+function renderWorkInfo(){ const el=$('workInfo'); if(!el) return; const w=Math.round(state.workSeconds||0); let s=t('workTime')+' : '+fmt(w);
+  if(state.player&&isFinite(state.player.duration)&&state.player.duration>0){ const r=state.workSeconds/state.player.duration; s+=' · ~'+r.toFixed(1)+'× '+t('workRatioSuffix')+' ('+fmt(state.player.duration)+')'; } else s+=' · '+t('workNoData');
+  el.textContent=s; }
 function togglePlaceholder(){ const empty = editor.children.length===0 && (editor.textContent||'').trim()===''; $('editorPh').classList.toggle('hide', !empty); }
 let saveDebounce=null;
 function scheduleSave(){ clearTimeout(saveDebounce); saveDebounce=setTimeout(async ()=>{
@@ -837,12 +848,12 @@ function scheduleSave(){ clearTimeout(saveDebounce); saveDebounce=setTimeout(asy
   else { $('saveDot').className='save-dot saved'; $('saveText').textContent=t('savedLocal'); }
 }, 700); }
 function markDirty(){ state.dirty=true; $('saveDot').className='save-dot dirty'; $('saveText').textContent=t('modifying'); scheduleSave(); }
-function onEditorChanged(){ togglePlaceholder(); countPlaceholders(); markDirty(); }
+function onEditorChanged(){ tickWork(); togglePlaceholder(); countPlaceholders(); markDirty(); }
 function persistMeta(){ localStorage.setItem(LS.file,state.fileName); localStorage.setItem(LS.speakers,JSON.stringify(state.speakers));
-  localStorage.setItem(LS.settings,JSON.stringify(state.settings)); localStorage.setItem(LS.meta,JSON.stringify(state.meta)); }
-function serializeProject(){ return { format:'rescribe', version:VERSION, savedAt:new Date().toISOString(), fileName:state.fileName, importedName:state.importedName, meta:state.meta, speakers:state.speakers, settings:state.settings, html:editor.innerHTML }; }
+  localStorage.setItem(LS.settings,JSON.stringify(state.settings)); localStorage.setItem(LS.meta,JSON.stringify(state.meta)); localStorage.setItem('rescribe_work', String(Math.round(state.workSeconds||0))); }
+function serializeProject(){ return { format:'rescribe', version:VERSION, savedAt:new Date().toISOString(), fileName:state.fileName, importedName:state.importedName, work:Math.round(state.workSeconds||0), meta:state.meta, speakers:state.speakers, settings:state.settings, html:editor.innerHTML }; }
 function loadProject(data){ if(data.html!=null){ editor.innerHTML=data.html; rebindAfterLoad(); } state.speakers=data.speakers||[];
-  state.fileName=data.fileName||''; state.importedName=data.importedName||''; renderFooterName();
+  state.fileName=data.fileName||''; state.importedName=data.importedName||''; state.workSeconds=data.work||0; renderFooterName();
   if(data.meta){ state.meta=Object.assign(defaultMeta(), data.meta); if(!state.meta.custom) state.meta.custom=[]; if(!state.meta.date) state.meta.date=todayISO(); }
   if(data.settings) state.settings=Object.assign(state.settings,data.settings);
   $('stepSel').value=state.settings.step; $('rwSel').value=state.settings.rewindOnPause; applyFont(); fillCtxInputs(); renderCustomFields();
@@ -949,9 +960,9 @@ function rebindAfterLoad(){ editor.querySelectorAll('.tc, .turn, .pause-mark').f
 /* ============================ Reset ============================ */
 function resetAll(){ if(!confirm(t('resetConfirm'))) return;
   detachPlayer(); if(state.mediaURL) URL.revokeObjectURL(state.mediaURL); state.mediaURL=null; state.player=null; state.fileHandle=null; clearInterval(state.autosaveTimer);
-  state.speakers=[]; state.fileName=''; state.mediaName=''; state.importedName=''; state.meta=defaultMeta(); state.dirty=false; pauseEl=null; $('pauseBtn').classList.remove('on');
+  state.speakers=[]; state.fileName=''; state.mediaName=''; state.importedName=''; state.meta=defaultMeta(); state.dirty=false; state.workSeconds=0; workLastTick=Date.now(); pauseEl=null; $('pauseBtn').classList.remove('on');
   editor.innerHTML='';
-  [LS.html,LS.meta,LS.speakers,LS.file].forEach(k=>localStorage.removeItem(k));
+  [LS.html,LS.meta,LS.speakers,LS.file,'rescribe_work'].forEach(k=>localStorage.removeItem(k));
   $('connectFileBtn').classList.remove('primary'); $('connectFileBtn').innerHTML='💾 <span data-i18n="autosave"></span>';
   renderFooterName(); $('saveNudge').classList.remove('show'); state.saveNudgeHidden=false;
   enableTransport(false); $('durTime').textContent='0:00'; $('curTime').textContent='0:00'; $('pctTime').textContent='0%'; $('fill').style.width='0'; $('head').style.left='0';
@@ -1023,7 +1034,7 @@ document.addEventListener('mousedown', e=>{ if(spkPop.classList.contains('show')
 document.addEventListener('click',()=>document.querySelectorAll('.dd').forEach(d=>d.classList.remove('open')));
 document.querySelectorAll('[data-export]').forEach(b=>b.onclick=()=>doExport(b.dataset.export));
 document.querySelectorAll('[data-import]').forEach(b=>b.onclick=()=>importText(b.dataset.import));
-$('helpBtn').onclick=()=>{ renderStats(); $('helpModal').classList.add('show'); };
+$('helpBtn').onclick=()=>{ renderStats(); renderWorkInfo(); $('helpModal').classList.add('show'); };
 $('helpClose').onclick=()=>$('helpModal').classList.remove('show');
 $('helpModal').addEventListener('click',e=>{ if(e.target===$('helpModal')) $('helpModal').classList.remove('show'); });
 
@@ -1048,6 +1059,7 @@ function flash(msg){ if(!toastEl){ toastEl=document.createElement('div'); toastE
     state.speakers=JSON.parse(localStorage.getItem(LS.speakers)||'[]');
     const html=localStorage.getItem(LS.html); if(html){ editor.innerHTML=html; rebindAfterLoad(); }
     state.fileName=localStorage.getItem(LS.file)||'';
+    state.workSeconds=parseFloat(localStorage.getItem('rescribe_work')||'0')||0;
   }catch(e){ console.warn('restore',e); }
   applyFont(); fillCtxInputs(); applyTheme(); applyI18n(); applySpeed();
   if(!HAS_FS) $('connectFileBtn').title='Chrome/Edge required — use “Export”';

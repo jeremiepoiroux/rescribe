@@ -84,6 +84,7 @@ The service worker is **network-first for the app shell**, so a redeploy is pick
 - **Light / dark theme toggle** (overrides the system preference), and a **back-to-top** button.
 - **Pause** is now a toggle: press it to bookmark where you stopped (media pauses), press again to jump back and resume.
 - Loaded media filename shown in the bottom bar; **Save** sits next to **Export**; **Find & replace** button relabeled; the redundant next/previous buttons removed.
+- Help panel shows an **estimated working time** (active time, excluding long breaks) and its **ratio** to the interview duration.
 - **Context revamp**: separate **interview title** (used for the export filename) and study title; **date** as a calendar picker defaulting to today; location replaced by a **Video call / In person** switch; free custom fields kept.
 - **Timecode navigation**: click the progress bar to jump to the matching timecode in the text (the one just before that point), plus a **Last TC** button to jump to the most recent marker.
 - **Pause markers** to bookmark where you stopped transcribing.
