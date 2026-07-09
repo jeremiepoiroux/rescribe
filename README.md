@@ -27,7 +27,7 @@ Deployable to GitHub Pages (or any static host) and installable as an offline PW
 
 ### Saving
 - Automatic to `localStorage` on every keystroke (session restored on reload).
-- **Disk auto-save**: pick a `.rescribe.json` file once, then it's rewritten automatically every 2 minutes and on <kbd>⌘S</kbd> (Chrome/Edge; falls back to localStorage + manual export elsewhere).
+- **Disk auto-save**: pick a save folder once (e.g. Documents/Rescribe), then every project is written there automatically on each change and on <kbd>⌘S</kbd>, named after its interview title (Chrome/Edge; falls back to a single-file picker or localStorage elsewhere).
 
 ## Keyboard shortcuts
 
@@ -56,7 +56,7 @@ Anything the browser can decode: `.mp3`, `.wav`, `.m4a`, `.aac`, `.ogg`, `.opus`
 
 ### Exports
 - **Project** `.rescribe.json` — re-importable, keeps everything (no required context).
-- **Text** `.txt`, **Markdown** `.md`, **HTML** `.html` — document outputs, prefixed with the context header. These require the context to be filled (title, date, transcribed-by).
+- **Text** `.txt`, **Markdown** `.md`, **HTML** `.html`, **PDF** (via the browser print dialog) — document outputs, prefixed with the context header (which now also lists talk-time per speaker and the working-time ratio). These require the context to be filled (title, date, transcribed-by).
 
 ## Run it locally
 
@@ -78,6 +78,12 @@ Upload the files to a repo (web UI or git), then *Settings → Pages → Branch 
 The service worker is **network-first for the app shell**, so a redeploy is picked up automatically when online — no hard-refresh or cache-version bump needed.
 
 ## Changelog
+
+### v1.3.1
+- **Save folder**: pick a folder once (e.g. Documents/Rescribe, opened via the browser's folder picker) and every project is written there automatically under its interview title. Remembered across sessions (Chromium); falls back to a single-file picker elsewhere.
+- **PDF export** (via the browser's print-to-PDF), and **talk-time stats + working-time ratio now included in every export header**.
+- **Finish** button opens a wrap-up window with the statistics, all export options, and a New transcription button.
+- Non-gendered French labels (Enquêteur·ice, ex. enquêté·e).
 
 ### v1.3.0
 - **Compact merged top bar**: brand, transport, speed (− / +), and progress in one bar that always stays fixed (only the middle scrolls). Font size, language, help, theme toggle, and the **New transcription** button moved to the bottom bar.
