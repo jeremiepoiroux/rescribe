@@ -79,6 +79,9 @@ The service worker is **network-first for the app shell**, so a redeploy is pick
 
 ## Changelog
 
+### v1.3.2
+- Compact **role badge next to each speaker** — **I** (interviewer) / **E** (interviewee), with the full role in the tooltip, localized (Enquêteur·ice / Enquêté·e · Interviewer / Interviewee).
+
 ### v1.3.1
 - **Save folder**: pick a folder once (e.g. Documents/Rescribe, opened via the browser's folder picker) and every project is written there automatically under its interview title. Remembered across sessions (Chromium); falls back to a single-file picker elsewhere.
 - **PDF export** (via the browser's print-to-PDF), and **talk-time stats + working-time ratio now included in every export header**.
