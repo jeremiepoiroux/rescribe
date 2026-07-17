@@ -79,6 +79,15 @@ The service worker is **network-first for the app shell**, so a redeploy is pick
 
 ## Changelog
 
+### v1.3.4
+- The **(I) / (E) role tag now shows in the editor** next to each speaker (e.g. `Jérémie (I) : …`), not only in exports. Existing turns are upgraded on load; no duplication in exports.
+
+### v1.3.3
+- **Role tag on the exported transcript**: each turn shows `(I)` / `(E)` (interviewer / interviewee) — same in FR and EN, with the full roles listed in the header.
+- **Live word count** in the bottom bar, and included in the export header, stats window, and Help.
+- **Continuous save clarified**: the 💾 button opens a menu to see where it saves and change the folder; after a page reload it shows a ⟳ "resume" state (the browser re-asks for folder access), with an explanation in Help and the first-run prompt.
+- Inserting an annotation no longer adds a trailing space after `]`.
+
 ### v1.3.2
 - Compact **role badge next to each speaker** — **I** (interviewer) / **E** (interviewee), with the full role in the tooltip, localized (Enquêteur·ice / Enquêté·e · Interviewer / Interviewee).
 
