@@ -79,6 +79,11 @@ The service worker is **network-first for the app shell**, so a redeploy is pick
 
 ## Changelog
 
+### v1.3.5
+- Working-time ratio is now computed against **how far the transcription has reached** (furthest timecode / playhead), not the full media length — e.g. `~1.2× the transcribed audio (25:00 of 55:35)`. More meaningful when checking Help mid-session.
+- Only the interviewer gets a tag now — **`(I)`**; interviewees show no tag.
+- The **editing toolbar is now fixed** while the transcript scrolls, and the little-used **Pause** button was removed.
+
 ### v1.3.4
 - The **(I) / (E) role tag now shows in the editor** next to each speaker (e.g. `Jérémie (I) : …`), not only in exports. Existing turns are upgraded on load; no duplication in exports.
 

@@ -86,7 +86,7 @@ select.mini { font-family: inherit; font-size: .78rem; padding: 4px 6px; border-
 .q-labels span:last-child { transform: translateX(-100%); }
 
 /* Toolbar */
-.toolbar { display: flex; flex-wrap: wrap; gap: 8px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+.toolbar { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 0; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 15; background: var(--bg); }
 .tgroup { display: flex; align-items: center; gap: 4px; padding: 3px; background: var(--surf); border: 1px solid var(--border); border-radius: 10px; }
 .tgroup .sep { width: 1px; align-self: stretch; background: var(--border); margin: 2px 1px; }
 .tool { display: inline-flex; align-items: center; gap: 6px; padding: 6px 11px; border-radius: 7px; border: none; background: transparent; color: var(--text); font-size: .82rem; font-weight: 500; }
@@ -290,7 +290,6 @@ select.mini { font-family: inherit; font-size: .78rem; padding: 4px 6px; border-
     </div>
     <div class="tgroup">
       <button class="tool accent" id="insAnnotBtn" data-i18n-title="insAnnotTitle"><span class="ico">#</span><span data-i18n="insAnnot"></span></button>
-      <button class="tool tag" id="pauseBtn" data-i18n-title="pauseTitle"><span class="ico">⏸</span><span data-i18n="pauseTag"></span></button>
       <button class="tool" id="lastTcBtn" data-i18n-title="lastTcTitle">↧ <span data-i18n="lastTc"></span></button>
     </div>
     <div class="tgroup">
@@ -445,7 +444,7 @@ select.mini { font-family: inherit; font-size: .78rem; padding: 4px 6px; border-
 
 <script>
 'use strict';
-const VERSION = '1.3.4';
+const VERSION = '1.3.5';
 const BUILD = '2026-07-17';
 const REPO_URL = 'https://github.com/jeremiepoiroux/rescribe';
 
@@ -469,7 +468,7 @@ const I18N = {
     speakersEmptyHtml:"Aucun interlocuteur. Ajoute un nom (coche « Intervieweur » pour l'enquêteur). Ensuite <kbd>⌘J</kbd> ou <kbd>@</kbd> insère un timecode et fait choisir qui parle.",
     noSpeaker:"— sans interlocuteur —",
     stats:"Statistiques", statsHint:"— temps de parole par interlocuteur", statsEmpty:"Pose des timecodes (⌘J) en attribuant les interlocuteurs pour voir les temps de parole.",
-    workTitle:"Temps de travail", workHint:"— temps actif estimé, hors longues pauses", workTime:"Temps passé sur la retranscription", workRatioSuffix:"la durée de l'entretien", workNoData:"charge le média pour le ratio",
+    workTitle:"Temps de travail", workHint:"— temps actif estimé, hors longues pauses", workTime:"Temps passé sur la retranscription", workRatioSuffix:"l'audio transcrit", workOf:"sur", workNoData:"charge le média pour le ratio",
     context:"Contexte", contextHint:"— obligatoire, apparaît en en-tête des exports",
     interviewTitle:"Titre de l'entretien", studyTitle:"Titre de l'étude", date:"Date de l'entretien", transcribedBy:"Retranscrit par",
     mode:"Format", modeNone:"—", modeVisio:"Visio", modePresentiel:"Présentiel",
@@ -519,7 +518,7 @@ const I18N = {
     speakersEmptyHtml:"No speakers yet. Add a name (tick “Interviewer” for the interviewer). Then <kbd>⌘J</kbd> or <kbd>@</kbd> inserts a timecode and lets you pick who's speaking.",
     noSpeaker:"— no speaker —",
     stats:"Statistics", statsHint:"— talk time per speaker", statsEmpty:"Add timecodes (⌘J) attributing speakers to see talk time.",
-    workTitle:"Working time", workHint:"— estimated active time, excluding long breaks", workTime:"Time spent transcribing", workRatioSuffix:"the interview duration", workNoData:"load the media for the ratio",
+    workTitle:"Working time", workHint:"— estimated active time, excluding long breaks", workTime:"Time spent transcribing", workRatioSuffix:"the transcribed audio", workOf:"of", workNoData:"load the media for the ratio",
     context:"Context", contextHint:"— required, shown in the export header",
     interviewTitle:"Interview title", studyTitle:"Study title", date:"Interview date", transcribedBy:"Transcribed by",
     mode:"Format", modeNone:"—", modeVisio:"Video call", modePresentiel:"In person",
@@ -788,7 +787,7 @@ function showPopup(items, onPick, rect){
   if(!items.length){ spkPop.innerHTML='<div class="spk-pop-empty">'+t('noSpeakerPop')+'</div>'; popState=null; }
   else { popState={items, onPick, active:0};
     spkPop.innerHTML=items.map((it,i)=>{ const a=i===0?' active':'';
-      if(it.type==='speaker') return `<div class="spk-pop-item${a}" data-idx="${i}"><span class="dot" style="background:${it.spk.color}"></span><span>${escapeHtml(it.spk.name)}</span><span class="role-tag ${it.spk.interviewer?'i':'e'}" style="margin-left:auto" title="${escapeHtml(it.spk.interviewer?t('interviewer'):t('interviewee'))}">${it.spk.interviewer?t('tagI'):t('tagE')}</span></div>`;
+      if(it.type==='speaker') return `<div class="spk-pop-item${a}" data-idx="${i}"><span class="dot" style="background:${it.spk.color}"></span><span>${escapeHtml(it.spk.name)}</span>${it.spk.interviewer?`<span class="role-tag i" style="margin-left:auto" title="${escapeHtml(t('interviewer'))}">${t('tagI')}</span>`:''}</div>`;
       if(it.type==='none') return `<div class="spk-pop-item${a}" data-idx="${i}"><span class="dot none"></span><span class="muted">${t('noSpeaker')}</span></div>`;
       if(it.type==='annot-new') return `<div class="spk-pop-item${a}" data-idx="${i}"><span class="dot" style="background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;line-height:1">+</span><span class="muted">${t('createAnnot')}</span> <span class="tag-label">${escapeHtml(it.label)}</span></div>`;
       return `<div class="spk-pop-item${a}" data-idx="${i}"><span class="dot tag"></span><span class="tag-label">${escapeHtml(it.label)}</span></div>`;
@@ -818,7 +817,7 @@ function renderSpeakers(){ const list=$('spkList');
   if(!state.speakers.length){ list.innerHTML='<span class="empty-hint">'+t('speakersEmptyHtml')+'</span>'; return; }
   const sorted=state.speakers.slice().sort((a,b)=>(b.interviewer?1:0)-(a.interviewer?1:0)); list.innerHTML='';
   sorted.forEach(s=>{ const chip=document.createElement('div'); chip.className='spk-chip'; chip.title=t('timecodeTitle');
-    chip.innerHTML=`<span class="dot" style="background:${s.color}"></span><span class="nm" style="color:${s.color}">${escapeHtml(s.name)}</span><span class="role-tag ${s.interviewer?'i':'e'}" title="${escapeHtml(s.interviewer?t('interviewer'):t('interviewee'))}">${s.interviewer?t('tagI'):t('tagE')}</span>${s.role?`<span class="rl">${escapeHtml(s.role)}</span>`:''}<button aria-label="✕">✕</button>`;
+    chip.innerHTML=`<span class="dot" style="background:${s.color}"></span><span class="nm" style="color:${s.color}">${escapeHtml(s.name)}</span>${s.interviewer?`<span class="role-tag i" title="${escapeHtml(t('interviewer'))}">${t('tagI')}</span>`:''}${s.role?`<span class="rl">${escapeHtml(s.role)}</span>`:''}<button aria-label="✕">✕</button>`;
     chip.addEventListener('click',e=>{ if(e.target.tagName==='BUTTON'){removeSpeaker(s.id);return;} if(state.player){ editor.focus(); insertTurn(state.player.currentTime, s); } });
     list.appendChild(chip); });
 }
@@ -880,8 +879,12 @@ function deleteTemplate(){ const id=$('tplSelect').value; if(!id){ flash(t('temp
 const WORK_IDLE=120000; let workLastTick=Date.now(), workLastSave=0;
 function tickWork(){ const now=Date.now(); const gap=now-workLastTick; if(gap>0&&gap<WORK_IDLE) state.workSeconds+=gap/1000; workLastTick=now;
   if(now-workLastSave>15000){ workLastSave=now; try{ localStorage.setItem('rescribe_work', String(Math.round(state.workSeconds))); }catch(e){} } }
+function transcribedPos(){ let p=(state.player&&isFinite(state.player.currentTime))?state.player.currentTime:0;
+  editor.querySelectorAll('.turn,.pause-mark').forEach(el=>{ const tt=parseFloat(el.dataset.t); if(isFinite(tt)&&tt>p) p=tt; });
+  const d=(state.player&&isFinite(state.player.duration))?state.player.duration:0; if(d&&p>d) p=d; return p; }
 function workText(){ const w=Math.round(state.workSeconds||0); let s=t('workTime')+' : '+fmt(w);
-  if(state.player&&isFinite(state.player.duration)&&state.player.duration>0){ const r=state.workSeconds/state.player.duration; s+=' · ~'+r.toFixed(1)+'× '+t('workRatioSuffix')+' ('+fmt(state.player.duration)+')'; } else s+=' · '+t('workNoData');
+  const pos=transcribedPos(); const d=(state.player&&isFinite(state.player.duration))?state.player.duration:0;
+  if(pos>0){ s+=' · ~'+(state.workSeconds/pos).toFixed(1)+'× '+t('workRatioSuffix')+' ('+fmt(pos)+(d?' '+t('workOf')+' '+fmt(d):'')+')'; } else s+=' · '+t('workNoData');
   const n=wordCount(); if(n) s+=' · '+n+' '+t('wordsShort');
   return s; }
 function renderWorkInfo(){ const el=$('workInfo'); if(el) el.textContent=workText(); }
@@ -969,10 +972,10 @@ function buildHeaderLines(){ const L=[], m=state.meta;
   const totals=computeStats(); const ids=Object.keys(totals);
   if(ids.length){ const sum=ids.reduce((a,k)=>a+totals[k],0)||1; ids.sort((a,b)=>totals[b]-totals[a]);
     L.push(t('stats')+' : '+ids.map(id=>{ const s=state.speakers.find(x=>x.id===id); return (s?s.name:'?')+' '+fmt(totals[id])+' ('+Math.round(totals[id]/sum*100)+'%)'; }).join(', ')); }
-  if(state.workSeconds>0){ let wl=t('workTime')+' : '+fmt(Math.round(state.workSeconds)); if(state.player&&isFinite(state.player.duration)&&state.player.duration>0) wl+=' (~'+(state.workSeconds/state.player.duration).toFixed(1)+'× '+t('workRatioSuffix')+')'; L.push(wl); }
+  if(state.workSeconds>0){ let wl=t('workTime')+' : '+fmt(Math.round(state.workSeconds)); const pos=transcribedPos(); if(pos>0) wl+=' (~'+(state.workSeconds/pos).toFixed(1)+'× '+t('workRatioSuffix')+')'; L.push(wl); }
   { const n=wordCount(); if(n) L.push(t('words')+' : '+n); }
   return L; }
-function turnLetter(el){ const id=el.dataset.spk; if(!id) return ''; const s=state.speakers.find(x=>x.id===id); return s?(s.interviewer?t('tagI'):t('tagE')):''; }
+function turnLetter(el){ const id=el.dataset.spk; if(!id) return ''; const s=state.speakers.find(x=>x.id===id); return (s&&s.interviewer)?t('tagI'):''; }
 function buildPlainText(md){ const clone=editor.cloneNode(true);
   clone.querySelectorAll('.pause-mark').forEach(pm=>pm.replaceWith(document.createTextNode('\n'+pm.textContent+'\n')));
   clone.querySelectorAll('.turn').forEach(tn=>{ const tc=tn.querySelector('.tc'); const sp=tn.querySelector('.turn-spk');
@@ -1051,7 +1054,7 @@ function rebindAfterLoad(){ editor.querySelectorAll('.tc, .turn, .pause-mark').f
 /* ============================ Reset ============================ */
 function resetAll(){ if(!confirm(t('resetConfirm'))) return;
   detachPlayer(); if(state.mediaURL) URL.revokeObjectURL(state.mediaURL); state.mediaURL=null; state.player=null; state.fileHandle=null; state.saveFileName=null; clearInterval(state.autosaveTimer);
-  state.speakers=[]; state.fileName=''; state.mediaName=''; state.importedName=''; state.meta=defaultMeta(); state.dirty=false; state.saveActive=false; state.workSeconds=0; workLastTick=Date.now(); pauseEl=null; $('pauseBtn').classList.remove('on');
+  state.speakers=[]; state.fileName=''; state.mediaName=''; state.importedName=''; state.meta=defaultMeta(); state.dirty=false; state.saveActive=false; state.workSeconds=0; workLastTick=Date.now(); pauseEl=null;
   editor.innerHTML='';
   [LS.html,LS.meta,LS.speakers,LS.file,'rescribe_work'].forEach(k=>localStorage.removeItem(k));
   updateSaveBtn(); renderWordCount();
@@ -1094,7 +1097,6 @@ $('rwSel').onchange=()=>{ state.settings.rewindOnPause=parseInt($('rwSel').value
 $('videoToggle').onclick=()=>{ const on=$('videoBox').classList.toggle('show'); $('videoToggle').classList.toggle('on',on); };
 $('tcBtn').addEventListener('mousedown', e=>{ e.preventDefault(); e.stopPropagation(); editor.focus(); timecodeFlow(); });
 $('insAnnotBtn').addEventListener('mousedown', e=>{ e.preventDefault(); e.stopPropagation(); editor.focus(); const r=getRange(); r.deleteContents(); const n=document.createTextNode('#'); r.insertNode(n); const rr=document.createRange(); rr.setStart(n,1); rr.collapse(true); const s=window.getSelection(); s.removeAllRanges(); s.addRange(rr); onEditorChanged(); maybeShowAnnot(); });
-$('pauseBtn').addEventListener('mousedown', e=>{ e.preventDefault(); togglePauseMark(); });
 $('lastTcBtn').onclick=jumpToLastMarker;
 $('frToggle').onclick=()=>$('frBar').classList.toggle('show');
 $('frNext').onclick=replaceNext; $('frAll').onclick=replaceAll;
