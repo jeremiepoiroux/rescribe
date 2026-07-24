@@ -79,6 +79,11 @@ The service worker is **network-first for the app shell**, so a redeploy is pick
 
 ## Changelog
 
+### v1.3.6
+- Statistics and working time are shown **only in the Finish window**, not in Help.
+- The save-setup banner is replaced by an **amber warning on the 💾 button** (bottom-right) whenever disk save isn't active.
+- **More reliable saving**: writes go to disk only when the folder access is confirmed this session; otherwise they fall back to `localStorage` and the button warns (instead of failing silently). After a reload, one click on 💾 resumes. It's a single `.rescribe.json` file updated in place (the transient `.crswap` is the browser's atomic-write swap file).
+
 ### v1.3.5
 - Working-time ratio is now computed against **how far the transcription has reached** (furthest timecode / playhead), not the full media length — e.g. `~1.2× the transcribed audio (25:00 of 55:35)`. More meaningful when checking Help mid-session.
 - Only the interviewer gets a tag now — **`(I)`**; interviewees show no tag.

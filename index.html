@@ -99,9 +99,8 @@ select.mini { font-family: inherit; font-size: .78rem; padding: 4px 6px; border-
 .badge { font-size: .7rem; background: var(--accent-bg); color: var(--accent); padding: 1px 6px; border-radius: 10px; font-weight: 600; }
 
 /* Save nudge */
-.save-nudge { display: none; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 12px 0 0; padding: 10px 14px; background: var(--accent-bg); border: 1px solid var(--accent-border); border-radius: 10px; font-size: .85rem; color: var(--text); }
-.save-nudge.show { display: flex; }
-.save-nudge .sn-actions { display: flex; gap: 8px; }
+.btn.warn { color: var(--tag); border-color: var(--tag); }
+.btn.warn:hover { background: var(--tag-bg); }
 
 /* Panels */
 .panel { padding: 12px 0; border-bottom: 1px solid var(--border); }
@@ -276,13 +275,6 @@ select.mini { font-family: inherit; font-size: .78rem; padding: 4px 6px; border-
 
 <main class="content">
  <div class="wrap">
-  <div class="save-nudge" id="saveNudge">
-    <span>💾 <span data-i18n="saveNudge"></span></span>
-    <span class="sn-actions">
-      <button class="btn small primary" id="snConfig" data-i18n="saveNudgeConfig"></button>
-      <button class="btn small" id="snIgnore" data-i18n="saveNudgeIgnore"></button>
-    </span>
-  </div>
 
   <div class="toolbar">
     <div class="tgroup">
@@ -412,10 +404,6 @@ select.mini { font-family: inherit; font-size: .78rem; padding: 4px 6px; border-
       <tr><td data-i18n="scAnnot"></td><td><kbd>#</kbd></td></tr>
       <tr><td data-i18n="scSave"></td><td><kbd>⌘</kbd> <kbd>S</kbd></td></tr>
     </table>
-    <p class="sub" style="margin:18px 0 6px;color:var(--text);font-weight:500"><span data-i18n="stats"></span> <span class="hint" style="font-weight:400;color:var(--faint)" data-i18n="statsHint"></span></p>
-    <div id="statsBody"></div>
-    <p class="sub" style="margin:18px 0 6px;color:var(--text);font-weight:500"><span data-i18n="workTitle"></span> <span class="hint" style="font-weight:400;color:var(--faint)" data-i18n="workHint"></span></p>
-    <div id="workInfo" style="font-size:.9rem"></div>
     <p class="credit" id="versionLine"></p>
   </div>
 </div>
@@ -444,7 +432,7 @@ select.mini { font-family: inherit; font-size: .78rem; padding: 4px 6px; border-
 
 <script>
 'use strict';
-const VERSION = '1.3.5';
+const VERSION = '1.3.6';
 const BUILD = '2026-07-17';
 const REPO_URL = 'https://github.com/jeremiepoiroux/rescribe';
 
@@ -616,8 +604,7 @@ function loadMedia(file) {
 const onMeta = () => { const d = state.player.duration;
   $('durTime').textContent = fmt(d);
   [0,1,2,3,4].forEach(i=>{ $('q'+i).textContent=fmt(d*i/4); });
-  enableTransport(true); updateProgress(); renderCtxAuto(); flash(t('mediaLoaded', state.fileName, fmt(d))); maybeShowSaveNudge(); };
-function maybeShowSaveNudge(){ $('saveNudge').classList.toggle('show', (HAS_FS||HAS_DIR) && !state.saveActive && !state.saveNudgeHidden && !!(state.player && state.player.src)); }
+  enableTransport(true); updateProgress(); renderCtxAuto(); flash(t('mediaLoaded', state.fileName, fmt(d))); updateSaveBtn(); };
 const onTime = () => { updateProgress(); tickWork(); };
 const onPlay = () => $('playBtn').textContent = '❚❚';
 const onPause = () => $('playBtn').textContent = '▶';
@@ -837,7 +824,6 @@ function statsHtml(){ const totals=computeStats(); const ids=Object.keys(totals)
     return `<div class="stat-row"><span class="dot" style="background:${col}"></span><span class="stat-nm" style="color:${col}">${escapeHtml(name)}</span><span class="stat-bar"><span style="width:${pct}%;background:${col}"></span></span><span class="stat-val">${fmt(sec)} · ${pct}%</span></div>`;
   }).join('');
 }
-function renderStats(){ $('statsBody').innerHTML=statsHtml(); }
 function wordCount(){ const c=editor.cloneNode(true); c.querySelectorAll('.turn,.tc,.pause-mark').forEach(e=>e.remove()); const txt=(c.innerText||'').replace(/\[[^\]]*\]/g,' ').trim(); return txt?(txt.match(/\S+/g)||[]).length:0; }
 function renderWordCount(){ const el=$('wordCount'); if(el){ const n=wordCount(); el.textContent = n? n+' '+t('wordsShort') : ''; } }
 
@@ -887,13 +873,12 @@ function workText(){ const w=Math.round(state.workSeconds||0); let s=t('workTime
   if(pos>0){ s+=' · ~'+(state.workSeconds/pos).toFixed(1)+'× '+t('workRatioSuffix')+' ('+fmt(pos)+(d?' '+t('workOf')+' '+fmt(d):'')+')'; } else s+=' · '+t('workNoData');
   const n=wordCount(); if(n) s+=' · '+n+' '+t('wordsShort');
   return s; }
-function renderWorkInfo(){ const el=$('workInfo'); if(el) el.textContent=workText(); }
 function openDone(){ $('doneStats').innerHTML=statsHtml(); $('doneWork').textContent=workText(); $('doneModal').classList.add('show'); }
 function togglePlaceholder(){ const empty = editor.children.length===0 && (editor.textContent||'').trim()===''; $('editorPh').classList.toggle('hide', !empty); }
 let saveDebounce=null;
 function scheduleSave(){ clearTimeout(saveDebounce); saveDebounce=setTimeout(async ()=>{
   localStorage.setItem(LS.html,editor.innerHTML); persistMeta();
-  if(saveLinked()){ await writeToDisk(); }
+  if(state.saveActive){ await writeToDisk(); }
   else { $('saveDot').className='save-dot saved'; $('saveText').textContent=t('savedLocal'); }
 }, 700); }
 function markDirty(){ state.dirty=true; $('saveDot').className='save-dot dirty'; $('saveText').textContent=t('modifying'); scheduleSave(); }
@@ -917,10 +902,10 @@ async function idbSet(k,v){ const db=await idb(); return new Promise((res,rej)=>
 async function idbGet(k){ const db=await idb(); return new Promise((res,rej)=>{ const tx=db.transaction('kv','readonly'); const rq=tx.objectStore('kv').get(k); rq.onsuccess=()=>res(rq.result); rq.onerror=()=>rej(rq.error); }); }
 async function verifyPerm(h){ if(!h) return false; const o={mode:'readwrite'}; try{ if(await h.queryPermission(o)==='granted') return true; if(await h.requestPermission(o)==='granted') return true; }catch(e){} return false; }
 function saveLabel(){ return state.dirHandle? state.dirHandle.name : (state.fileHandle? (state.fileHandle.name||'') : ''); }
-function updateSaveBtn(){ const b=$('connectFileBtn'); if(!b) return;
+function updateSaveBtn(){ const b=$('connectFileBtn'); if(!b) return; b.classList.remove('primary','warn');
   if(state.saveActive){ b.innerHTML='💾 ✓'; b.classList.add('primary'); b.title=t('saveFolderSet', saveLabel()+(state.saveFileName?' / '+state.saveFileName:'')); }
-  else if(state.dirHandle||state.fileHandle){ b.innerHTML='💾 ⟳'; b.classList.remove('primary'); b.title=t('saveResumeHint'); }
-  else { b.innerHTML='💾 '+escapeHtml(t('autosave')); b.classList.remove('primary'); b.title=t('autosaveTitle'); } }
+  else if(state.dirHandle||state.fileHandle){ b.innerHTML='💾⚠︎ '+escapeHtml(t('saveResume')); b.classList.add('warn'); b.title=t('saveResumeHint'); }
+  else { b.innerHTML='💾⚠︎ '+escapeHtml(t('autosave')); b.classList.add('warn'); b.title=t('autosaveTitle'); } }
 function markSaveConnected(){ state.saveActive=true; updateSaveBtn(); }
 function buildSaveMenu(){ const m=$('saveMenu'); let h='';
   if(state.dirHandle||state.fileHandle){
@@ -944,7 +929,6 @@ async function connectSave(){
       state.saveFileName=null;
       if(await writeToDisk()){ startAutosaveTimer(); markSaveConnected(); flash(t('fsEnabled')); }
     } else { flash(t('fsUnsupported')); return; }
-    maybeShowSaveNudge();
   }catch(e){}
 }
 async function writeToDisk(){
@@ -953,8 +937,8 @@ async function writeToDisk(){
     else if(state.fileHandle){ fh=state.fileHandle; }
     else return false;
     const w=await fh.createWritable(); await w.write(JSON.stringify(serializeProject(),null,2)); await w.close();
-    state.dirty=false; $('saveDot').className='save-dot saved'; $('saveText').textContent='disk ✓ '+new Date().toLocaleTimeString(); return true;
-  }catch(e){ console.warn(e); return false; } }
+    state.dirty=false; state.saveActive=true; updateSaveBtn(); $('saveDot').className='save-dot saved'; $('saveText').textContent='disk ✓ '+new Date().toLocaleTimeString(); return true;
+  }catch(e){ console.warn(e); state.saveActive=false; clearInterval(state.autosaveTimer); updateSaveBtn(); $('saveDot').className='save-dot dirty'; $('saveText').textContent=t('savedLocal'); return false; } }
 function startAutosaveTimer(){ clearInterval(state.autosaveTimer); state.autosaveTimer=setInterval(()=>{ if(state.dirty) writeToDisk(); }, state.settings.autosaveMin*60000); }
 
 /* ============================ Export ============================ */
@@ -1058,7 +1042,7 @@ function resetAll(){ if(!confirm(t('resetConfirm'))) return;
   editor.innerHTML='';
   [LS.html,LS.meta,LS.speakers,LS.file,'rescribe_work'].forEach(k=>localStorage.removeItem(k));
   updateSaveBtn(); renderWordCount();
-  renderFooterName(); $('saveNudge').classList.remove('show'); state.saveNudgeHidden=false;
+  renderFooterName();
   enableTransport(false); $('durTime').textContent='0:00'; $('curTime').textContent='0:00'; $('pctTime').textContent='0%'; $('fill').style.width='0'; $('head').style.left='0';
   [0,1,2,3,4].forEach(i=>$('q'+i).textContent=(i===0||i===4)?'0:00':'·'); $('videoToggle').style.display='none';
   fillCtxInputs(); renderCustomFields(); renderSpeakers(); renderCtxAuto(); countPlaceholders(); togglePlaceholder();
@@ -1079,7 +1063,7 @@ document.addEventListener('keydown', e => {
   if(e.key==='F2'){e.preventDefault();return skip(state.settings.step);}
   const mod=e.metaKey||e.ctrlKey; if(!mod) return; const k=e.key.toLowerCase();
   if(k==='j'){e.preventDefault();return timecodeFlow();}
-  if(k==='s'){e.preventDefault();return saveLinked()?writeToDisk():connectSave();}
+  if(k==='s'){e.preventDefault();return state.saveActive?writeToDisk():connectSave();}
   if(k==='b'||k==='i'||k==='u'){e.preventDefault();}
 });
 
@@ -1113,8 +1097,6 @@ $('tplSelect').onchange=()=>{ if($('tplSelect').value) applyTemplate($('tplSelec
 $('openMediaBtn').onclick=()=>$('mediaInput').click();
 $('mediaInput').onchange=e=>{ if(e.target.files[0]) loadMedia(e.target.files[0]); e.target.value=''; };
 $('connectFileBtn').onclick=(e)=>{ e.stopPropagation(); if(!state.dirHandle && !state.fileHandle){ connectSave(); return; } document.querySelectorAll('.dd').forEach(d=>{ if(d.id!=='saveDd') d.classList.remove('open'); }); buildSaveMenu(); $('saveDd').classList.toggle('open'); };
-$('snConfig').onclick=async ()=>{ await connectSave(); maybeShowSaveNudge(); };
-$('snIgnore').onclick=()=>{ state.saveNudgeHidden=true; maybeShowSaveNudge(); };
 $('doneBtn').onclick=openDone;
 $('doneClose').onclick=()=>$('doneModal').classList.remove('show');
 $('doneModal').addEventListener('click',e=>{ if(e.target===$('doneModal')) $('doneModal').classList.remove('show'); });
@@ -1130,7 +1112,7 @@ document.addEventListener('mousedown', e=>{ if(spkPop.classList.contains('show')
 document.addEventListener('click',()=>document.querySelectorAll('.dd').forEach(d=>d.classList.remove('open')));
 document.querySelectorAll('[data-export]').forEach(b=>b.onclick=()=>doExport(b.dataset.export));
 document.querySelectorAll('[data-import]').forEach(b=>b.onclick=()=>importText(b.dataset.import));
-$('helpBtn').onclick=()=>{ renderStats(); renderWorkInfo(); $('helpModal').classList.add('show'); };
+$('helpBtn').onclick=()=>$('helpModal').classList.add('show');
 $('helpClose').onclick=()=>$('helpModal').classList.remove('show');
 $('helpModal').addEventListener('click',e=>{ if(e.target===$('helpModal')) $('helpModal').classList.remove('show'); });
 
@@ -1141,7 +1123,7 @@ window.addEventListener('dragleave',()=>{ if(--dragDepth<=0){ dragDepth=0; $('dr
 window.addEventListener('drop',e=>{ e.preventDefault(); dragDepth=0; $('dropOverlay').classList.remove('show'); const f=e.dataTransfer.files[0]; if(!f) return;
   if(f.type.startsWith('audio/')||f.type.startsWith('video/')) loadMedia(f);
   else if(/\.(json|otr)$/i.test(f.name)){ const r=new FileReader(); r.onload=()=>{try{loadProject(JSON.parse(r.result));}catch{}}; r.readAsText(f); } });
-window.addEventListener('beforeunload',e=>{ if(state.dirty&&!saveLinked()){ e.preventDefault(); e.returnValue=''; } });
+window.addEventListener('beforeunload',e=>{ if(state.dirty&&!state.saveActive){ e.preventDefault(); e.returnValue=''; } });
 
 let toastEl;
 function flash(msg){ if(!toastEl){ toastEl=document.createElement('div'); toastEl.style.cssText='position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:9px 16px;border-radius:10px;font-size:.85rem;z-index:300;box-shadow:var(--shadow);max-width:90%;text-align:center'; document.body.appendChild(toastEl); }
