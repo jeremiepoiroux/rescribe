@@ -27,7 +27,7 @@ Deployable to GitHub Pages (or any static host) and installable as an offline PW
 
 ### Saving
 - Automatic to `localStorage` on every keystroke (session restored on reload).
-- **Disk auto-save**: pick a save folder once (e.g. Documents/Rescribe), then every project is written there automatically on each change and on <kbd>⌘S</kbd>, named after its interview title (Chrome/Edge; falls back to a single-file picker or localStorage elsewhere).
+- **Save to disk**: a manual **Save .json** button (and <kbd>⌘S</kbd>). On the first save you pick the location; subsequent saves rewrite the same file for the session (Chrome/Edge; downloads elsewhere). The browser `localStorage` autosave above is always on regardless.
 
 ## Keyboard shortcuts
 
@@ -78,6 +78,9 @@ Upload the files to a repo (web UI or git), then *Settings → Pages → Branch 
 The service worker is **network-first for the app shell**, so a redeploy is picked up automatically when online — no hard-refresh or cache-version bump needed.
 
 ## Changelog
+
+### v1.3.7
+- **Simplified, reliable saving.** Removed the fragile "continuous folder save" (it re-asked for folder access after every reload and could write into the previous interview's file). Now: always-on `localStorage` autosave + a manual **Save .json** button (⌘S). On the first save you pick the location; subsequent saves and ⌘S rewrite the same file for the session. `Export → Project` still downloads a copy.
 
 ### v1.3.6
 - Statistics and working time are shown **only in the Finish window**, not in Help.

@@ -364,10 +364,7 @@ select.mini { font-family: inherit; font-size: .78rem; padding: 4px 6px; border-
    <button class="icon-btn" id="themeBtn" data-i18n-title="theme">🌙</button>
    <button class="icon-btn" id="langBtn" title="Language / Langue">FR</button>
    <button class="icon-btn" id="helpBtn" data-i18n-title="help">?</button>
-   <div class="dd" id="saveDd">
-     <button class="btn" id="connectFileBtn" data-i18n-title="autosaveTitle">💾 <span data-i18n="autosave"></span></button>
-     <div class="dd-menu up-right" id="saveMenu"></div>
-   </div>
+   <button class="btn" id="connectFileBtn" data-i18n-title="saveProjectTitle">💾 <span data-i18n="saveProject"></span></button>
    <div class="dd" id="exportDd">
      <button class="btn primary" id="exportBtn">⤓ <span data-i18n="export"></span> ▾</button>
      <div class="dd-menu up-right">
@@ -432,8 +429,8 @@ select.mini { font-family: inherit; font-size: .78rem; padding: 4px 6px; border-
 
 <script>
 'use strict';
-const VERSION = '1.3.6';
-const BUILD = '2026-07-17';
+const VERSION = '1.3.7';
+const BUILD = '2026-07-26';
 const REPO_URL = 'https://github.com/jeremiepoiroux/rescribe';
 
 /* ============================ i18n ============================ */
@@ -470,11 +467,11 @@ const I18N = {
     reset:"Nouvelle transcription", resetConfirm:"Démarrer une nouvelle retranscription ? Le texte, le contexte et les interlocuteurs actuels seront effacés (les modèles sont conservés).", resetDone:"Nouvelle retranscription",
     importMedia:"Média", importText:"Texte", projectFile:"Projet", textFile:"Texte", officeFile:"Word / OpenDocument",
     mediaLoaded:"Média importé : {0} ({1})", textImported:"Texte importé", docError:"Impossible de lire ce fichier", docUnsupported:"Format .doc non supporté — enregistre-le en .docx",
-    markdownFile:"Markdown", htmlFile:"HTML", pdfFile:"PDF", pdfHint:"(impression)", autosave:"Sauvegarde continue…", autosaveTitle:"Choisir un dossier de sauvegarde (ex. Documents/Rescribe) — chaque projet y est écrit automatiquement à chaque changement, sous le titre de l'entretien. Différent de « Exporter » (instantané téléchargé où tu veux).", export:"Exporter", projectReeditable:"Projet (ré-éditable)",
+    markdownFile:"Markdown", htmlFile:"HTML", pdfFile:"PDF", pdfHint:"(impression)", saveProject:"Enregistrer .json", saveProjectTitle:"Enregistrer le projet dans un fichier .rescribe.json (ré-éditable). La sauvegarde locale reste automatique dans le navigateur.", export:"Exporter", projectReeditable:"Projet (ré-éditable)",
     finish:"Terminer", doneTitle:"Retranscription terminée", doneSub:"Statistiques et export ci-dessous.", doneExport:"Exporter",
     dropHere:"Dépose ton fichier audio/vidéo",
     saveNudge:"Sauvegarde sur disque en pause — choisis un dossier pour tout enregistrer automatiquement (le travail reste dans le navigateur en attendant).", saveNudgeConfig:"Configurer", saveNudgeIgnore:"Ignorer",
-    saveLocation:"Enregistre dans", saveNow:"Enregistrer maintenant", saveChange:"Changer de dossier…", saveChoose:"Choisir un dossier de sauvegarde…", saveResume:"Reprendre la sauvegarde ici", saveResumeHint:"Sauvegarde en pause — clique pour reprendre", saveHelp:"Sauvegarde continue : choisis un dossier une fois → chaque projet y est écrit à chaque changement, sous le titre de l'entretien. Après un rechargement de la page, un clic sur 💾 réactive l'écriture (le navigateur redemande l'accès au dossier).",
+    saveHelp:"Sauvegarde locale automatique dans le navigateur (restaurée au rechargement). Pour un fichier durable ou partageable, clique « Enregistrer .json » (ou ⌘S) quand tu veux : au premier enregistrement tu choisis l'emplacement, puis ⌘S réécrit le même fichier. « Exporter → Projet » télécharge une copie.",
     words:"Nombre de mots", wordsShort:"mots",
     helpTitle:"À propos et raccourcis",
     about:"Rescribe est un éditeur local pour reprendre les transcriptions d'entretiens générées par IA. Inspiré d'oTranscribe et repensé pour la relecture : réécoute de l'audio et correction du texte, avec des timecodes cliquables qui attribuent chaque prise de parole à un interlocuteur, un en-tête de contexte réutilisable, et une sauvegarde locale + sur disque. Tout reste dans le navigateur — rien n'est envoyé.",
@@ -520,11 +517,11 @@ const I18N = {
     reset:"New transcription", resetConfirm:"Start a new transcription? The current text, context and speakers will be cleared (templates are kept).", resetDone:"New transcription",
     importMedia:"Media", importText:"Text", projectFile:"Project", textFile:"Text", officeFile:"Word / OpenDocument",
     mediaLoaded:"Media loaded: {0} ({1})", textImported:"Text imported", docError:"Couldn't read this file", docUnsupported:"The old .doc format isn't supported — save it as .docx",
-    markdownFile:"Markdown", htmlFile:"HTML", pdfFile:"PDF", pdfHint:"(print)", autosave:"Continuous save…", autosaveTitle:"Pick a save folder (e.g. Documents/Rescribe) — every project is written there automatically on each change, under the interview title. Unlike “Export” (a one-off snapshot downloaded anywhere).", export:"Export", projectReeditable:"Project (re-editable)",
+    markdownFile:"Markdown", htmlFile:"HTML", pdfFile:"PDF", pdfHint:"(print)", saveProject:"Save .json", saveProjectTitle:"Save the project to a .rescribe.json file (re-editable). Local autosave in the browser stays on automatically.", export:"Export", projectReeditable:"Project (re-editable)",
     finish:"Finish", doneTitle:"Transcription finished", doneSub:"Statistics and export below.", doneExport:"Export",
     dropHere:"Drop your audio/video file",
     saveNudge:"Disk save paused — pick a folder to save everything automatically (work stays in the browser meanwhile).", saveNudgeConfig:"Set up", saveNudgeIgnore:"Dismiss",
-    saveLocation:"Saving to", saveNow:"Save now", saveChange:"Change folder…", saveChoose:"Choose a save folder…", saveResume:"Resume saving here", saveResumeHint:"Saving paused — click to resume", saveHelp:"Continuous save: pick a folder once → every project is written there on each change, named after the interview title. After a page reload, click 💾 to resume writing (the browser re-asks for folder access).",
+    saveHelp:"Automatic local save in the browser (restored on reload). For a durable or shareable file, click “Save .json” (or ⌘S) whenever you want: on the first save you pick the location, then ⌘S rewrites the same file. “Export → Project” downloads a copy.",
     words:"Word count", wordsShort:"words",
     helpTitle:"About & shortcuts",
     about:"Rescribe is a local editor for revisiting AI-generated interview transcripts. Inspired by oTranscribe and rebuilt for the second pass: replay the audio and fix the text, with clickable timecodes that attribute each turn to a speaker, a reusable context header, and local + on-disk saving. Everything stays in the browser — nothing is uploaded.",
@@ -560,7 +557,7 @@ function applyI18n() {
   renderTemplateSelect(); renderCustomFields();
   if (!state.fileName) $('fileMeta').textContent = state.meta.interviewTitle || t('noMedia');
   else $('fileMeta').textContent = (state.player && state.player.src) ? (state.meta.interviewTitle||state.fileName) : (state.fileName + ' ' + t('reloadHint'));
-  renderSpeakers(); renderCtxAuto(); countPlaceholders(); renderWordCount(); updateSaveBtn();
+  renderSpeakers(); renderCtxAuto(); countPlaceholders(); renderWordCount();
 }
 function toggleLang(){ lang = lang === 'fr' ? 'en' : 'fr'; localStorage.setItem('rescribe_lang', lang); applyI18n(); }
 function effectiveTheme(){ const s=localStorage.getItem('rescribe_theme'); if(s) return s; return matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'; }
@@ -572,7 +569,7 @@ const LS = { html:'rescribe_html', file:'rescribe_file', speakers:'rescribe_spea
 const SPK_COLORS = ['#6366f1','#0d9488','#db2777','#ea580c','#0891b2','#65a30d','#9333ea','#dc2626'];
 function todayISO(){ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
 function defaultMeta(){ return { interviewTitle:'', studyTitle:'', mode:'', date:todayISO(), transcribedBy:'', custom:[] }; }
-const state = { player:null, fileName:'', mediaName:'', importedName:'', speakers:[], dirty:false, fileHandle:null, dirHandle:null, saveFileName:null, saveActive:false, autosaveTimer:null, mediaURL:null, saveNudgeHidden:false, speed:1, workSeconds:0,
+const state = { player:null, fileName:'', mediaName:'', importedName:'', speakers:[], dirty:false, fileHandle:null, mediaURL:null, speed:1, workSeconds:0,
   meta:defaultMeta(), settings:{ step:5, rewindOnPause:1, autosaveMin:2, fontSize:17 } };
 const $ = id => document.getElementById(id);
 const editor = $('editor');
@@ -604,7 +601,7 @@ function loadMedia(file) {
 const onMeta = () => { const d = state.player.duration;
   $('durTime').textContent = fmt(d);
   [0,1,2,3,4].forEach(i=>{ $('q'+i).textContent=fmt(d*i/4); });
-  enableTransport(true); updateProgress(); renderCtxAuto(); flash(t('mediaLoaded', state.fileName, fmt(d))); updateSaveBtn(); };
+  enableTransport(true); updateProgress(); renderCtxAuto(); flash(t('mediaLoaded', state.fileName, fmt(d))); };
 const onTime = () => { updateProgress(); tickWork(); };
 const onPlay = () => $('playBtn').textContent = '❚❚';
 const onPause = () => $('playBtn').textContent = '▶';
@@ -876,10 +873,9 @@ function workText(){ const w=Math.round(state.workSeconds||0); let s=t('workTime
 function openDone(){ $('doneStats').innerHTML=statsHtml(); $('doneWork').textContent=workText(); $('doneModal').classList.add('show'); }
 function togglePlaceholder(){ const empty = editor.children.length===0 && (editor.textContent||'').trim()===''; $('editorPh').classList.toggle('hide', !empty); }
 let saveDebounce=null;
-function scheduleSave(){ clearTimeout(saveDebounce); saveDebounce=setTimeout(async ()=>{
+function scheduleSave(){ clearTimeout(saveDebounce); saveDebounce=setTimeout(()=>{
   localStorage.setItem(LS.html,editor.innerHTML); persistMeta();
-  if(state.saveActive){ await writeToDisk(); }
-  else { $('saveDot').className='save-dot saved'; $('saveText').textContent=t('savedLocal'); }
+  $('saveDot').className='save-dot saved'; $('saveText').textContent=t('savedLocal');
 }, 700); }
 function markDirty(){ state.dirty=true; $('saveDot').className='save-dot dirty'; $('saveText').textContent=t('modifying'); scheduleSave(); }
 function onEditorChanged(){ tickWork(); togglePlaceholder(); countPlaceholders(); renderWordCount(); markDirty(); }
@@ -895,51 +891,18 @@ function loadProject(data){ if(data.html!=null){ editor.innerHTML=data.html; reb
   $('fileMeta').textContent = state.meta.interviewTitle || (state.fileName? state.fileName+' '+t('reloadHint') : t('noMedia')); markDirty(); }
 
 const HAS_FS='showSaveFilePicker' in window;
-const HAS_DIR='showDirectoryPicker' in window;
-function saveLinked(){ return !!(state.dirHandle || state.fileHandle); }
-function idb(){ return new Promise((res,rej)=>{ const r=indexedDB.open('rescribe',1); r.onupgradeneeded=()=>r.result.createObjectStore('kv'); r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); }); }
-async function idbSet(k,v){ const db=await idb(); return new Promise((res,rej)=>{ const tx=db.transaction('kv','readwrite'); tx.objectStore('kv').put(v,k); tx.oncomplete=()=>res(); tx.onerror=()=>rej(tx.error); }); }
-async function idbGet(k){ const db=await idb(); return new Promise((res,rej)=>{ const tx=db.transaction('kv','readonly'); const rq=tx.objectStore('kv').get(k); rq.onsuccess=()=>res(rq.result); rq.onerror=()=>rej(rq.error); }); }
-async function verifyPerm(h){ if(!h) return false; const o={mode:'readwrite'}; try{ if(await h.queryPermission(o)==='granted') return true; if(await h.requestPermission(o)==='granted') return true; }catch(e){} return false; }
-function saveLabel(){ return state.dirHandle? state.dirHandle.name : (state.fileHandle? (state.fileHandle.name||'') : ''); }
-function updateSaveBtn(){ const b=$('connectFileBtn'); if(!b) return; b.classList.remove('primary','warn');
-  if(state.saveActive){ b.innerHTML='💾 ✓'; b.classList.add('primary'); b.title=t('saveFolderSet', saveLabel()+(state.saveFileName?' / '+state.saveFileName:'')); }
-  else if(state.dirHandle||state.fileHandle){ b.innerHTML='💾⚠︎ '+escapeHtml(t('saveResume')); b.classList.add('warn'); b.title=t('saveResumeHint'); }
-  else { b.innerHTML='💾⚠︎ '+escapeHtml(t('autosave')); b.classList.add('warn'); b.title=t('autosaveTitle'); } }
-function markSaveConnected(){ state.saveActive=true; updateSaveBtn(); }
-function buildSaveMenu(){ const m=$('saveMenu'); let h='';
-  if(state.dirHandle||state.fileHandle){
-    h+=`<div class="dd-item" style="cursor:default;color:var(--muted)">${t('saveLocation')} : <small style="color:var(--text)">${escapeHtml(saveLabel())}${state.saveFileName?' / '+escapeHtml(state.saveFileName):''}</small></div>`;
-    if(!state.saveActive) h+=`<button class="dd-item" data-save="resume">${t('saveResume')}</button>`;
-    else h+=`<button class="dd-item" data-save="now">${t('saveNow')}</button>`;
-    h+=`<button class="dd-item" data-save="change">${t('saveChange')}</button>`;
-  } else h+=`<button class="dd-item" data-save="change">${t('saveChoose')}</button>`;
-  m.innerHTML=h;
-  m.querySelectorAll('[data-save]').forEach(b=>b.onclick=()=>{ $('saveDd').classList.remove('open'); const a=b.dataset.save;
-    if(a==='now') writeToDisk(); else if(a==='resume') connectSave(); else if(a==='change'){ state.dirHandle=null; state.fileHandle=null; state.saveActive=false; connectSave(); } }); }
-async function connectSave(){
-  try{
-    if(HAS_DIR){
-      if(!state.dirHandle){ state.dirHandle=await window.showDirectoryPicker({mode:'readwrite', startIn:'documents'}); try{ await idbSet('dir', state.dirHandle); }catch(e){} }
-      else if(!await verifyPerm(state.dirHandle)){ flash(t('fsUnsupported')); return; }
-      state.saveFileName=exportBase()+'.rescribe.json'; localStorage.setItem('rescribe_savename', state.saveFileName);
-      if(await writeToDisk()){ startAutosaveTimer(); markSaveConnected(state.dirHandle.name); flash(t('fsEnabled')); }
-    } else if(HAS_FS){
-      state.fileHandle=await window.showSaveFilePicker({ suggestedName:exportBase()+'.rescribe.json', startIn:'documents', types:[{description:'Rescribe project',accept:{'application/json':['.json']}}] });
-      state.saveFileName=null;
-      if(await writeToDisk()){ startAutosaveTimer(); markSaveConnected(); flash(t('fsEnabled')); }
-    } else { flash(t('fsUnsupported')); return; }
-  }catch(e){}
+async function saveProject(){
+  const json=JSON.stringify(serializeProject(),null,2); const name=exportBase()+'.rescribe.json';
+  if(HAS_FS){
+    try{
+      if(!state.fileHandle) state.fileHandle=await window.showSaveFilePicker({ suggestedName:name, startIn:'documents', types:[{description:'Rescribe project',accept:{'application/json':['.json']}}] });
+      const w=await state.fileHandle.createWritable(); await w.write(json); await w.close();
+      state.dirty=false; $('saveDot').className='save-dot saved'; $('saveText').textContent='.json ✓ '+new Date().toLocaleTimeString();
+    }catch(e){ /* annulé ou refusé */ }
+  } else {
+    download(name, json, 'application/json'); state.dirty=false; $('saveDot').className='save-dot saved'; $('saveText').textContent='.json ✓';
+  }
 }
-async function writeToDisk(){
-  try{ let fh;
-    if(state.dirHandle){ if(!state.saveFileName) return false; fh=await state.dirHandle.getFileHandle(state.saveFileName,{create:true}); }
-    else if(state.fileHandle){ fh=state.fileHandle; }
-    else return false;
-    const w=await fh.createWritable(); await w.write(JSON.stringify(serializeProject(),null,2)); await w.close();
-    state.dirty=false; state.saveActive=true; updateSaveBtn(); $('saveDot').className='save-dot saved'; $('saveText').textContent='disk ✓ '+new Date().toLocaleTimeString(); return true;
-  }catch(e){ console.warn(e); state.saveActive=false; clearInterval(state.autosaveTimer); updateSaveBtn(); $('saveDot').className='save-dot dirty'; $('saveText').textContent=t('savedLocal'); return false; } }
-function startAutosaveTimer(){ clearInterval(state.autosaveTimer); state.autosaveTimer=setInterval(()=>{ if(state.dirty) writeToDisk(); }, state.settings.autosaveMin*60000); }
 
 /* ============================ Export ============================ */
 function exportBase(){ return (state.meta.interviewTitle||state.meta.studyTitle||state.fileName.replace(/\.[^.]+$/,'')||'transcript').replace(/[\/\\:*?"<>|]/g,'-').trim()||'transcript'; }
@@ -1037,12 +1000,11 @@ function rebindAfterLoad(){ editor.querySelectorAll('.tc, .turn, .pause-mark').f
 
 /* ============================ Reset ============================ */
 function resetAll(){ if(!confirm(t('resetConfirm'))) return;
-  detachPlayer(); if(state.mediaURL) URL.revokeObjectURL(state.mediaURL); state.mediaURL=null; state.player=null; state.fileHandle=null; state.saveFileName=null; clearInterval(state.autosaveTimer);
-  state.speakers=[]; state.fileName=''; state.mediaName=''; state.importedName=''; state.meta=defaultMeta(); state.dirty=false; state.saveActive=false; state.workSeconds=0; workLastTick=Date.now(); pauseEl=null;
+  detachPlayer(); if(state.mediaURL) URL.revokeObjectURL(state.mediaURL); state.mediaURL=null; state.player=null; state.fileHandle=null;
+  state.speakers=[]; state.fileName=''; state.mediaName=''; state.importedName=''; state.meta=defaultMeta(); state.dirty=false; state.workSeconds=0; workLastTick=Date.now(); pauseEl=null;
   editor.innerHTML='';
   [LS.html,LS.meta,LS.speakers,LS.file,'rescribe_work'].forEach(k=>localStorage.removeItem(k));
-  updateSaveBtn(); renderWordCount();
-  renderFooterName();
+  renderWordCount(); renderFooterName();
   enableTransport(false); $('durTime').textContent='0:00'; $('curTime').textContent='0:00'; $('pctTime').textContent='0%'; $('fill').style.width='0'; $('head').style.left='0';
   [0,1,2,3,4].forEach(i=>$('q'+i).textContent=(i===0||i===4)?'0:00':'·'); $('videoToggle').style.display='none';
   fillCtxInputs(); renderCustomFields(); renderSpeakers(); renderCtxAuto(); countPlaceholders(); togglePlaceholder();
@@ -1063,7 +1025,7 @@ document.addEventListener('keydown', e => {
   if(e.key==='F2'){e.preventDefault();return skip(state.settings.step);}
   const mod=e.metaKey||e.ctrlKey; if(!mod) return; const k=e.key.toLowerCase();
   if(k==='j'){e.preventDefault();return timecodeFlow();}
-  if(k==='s'){e.preventDefault();return state.saveActive?writeToDisk():connectSave();}
+  if(k==='s'){e.preventDefault();return saveProject();}
   if(k==='b'||k==='i'||k==='u'){e.preventDefault();}
 });
 
@@ -1096,7 +1058,7 @@ $('tplSave').onclick=saveTemplate; $('tplDelete').onclick=deleteTemplate;
 $('tplSelect').onchange=()=>{ if($('tplSelect').value) applyTemplate($('tplSelect').value); };
 $('openMediaBtn').onclick=()=>$('mediaInput').click();
 $('mediaInput').onchange=e=>{ if(e.target.files[0]) loadMedia(e.target.files[0]); e.target.value=''; };
-$('connectFileBtn').onclick=(e)=>{ e.stopPropagation(); if(!state.dirHandle && !state.fileHandle){ connectSave(); return; } document.querySelectorAll('.dd').forEach(d=>{ if(d.id!=='saveDd') d.classList.remove('open'); }); buildSaveMenu(); $('saveDd').classList.toggle('open'); };
+$('connectFileBtn').onclick=saveProject;
 $('doneBtn').onclick=openDone;
 $('doneClose').onclick=()=>$('doneModal').classList.remove('show');
 $('doneModal').addEventListener('click',e=>{ if(e.target===$('doneModal')) $('doneModal').classList.remove('show'); });
@@ -1123,7 +1085,6 @@ window.addEventListener('dragleave',()=>{ if(--dragDepth<=0){ dragDepth=0; $('dr
 window.addEventListener('drop',e=>{ e.preventDefault(); dragDepth=0; $('dropOverlay').classList.remove('show'); const f=e.dataTransfer.files[0]; if(!f) return;
   if(f.type.startsWith('audio/')||f.type.startsWith('video/')) loadMedia(f);
   else if(/\.(json|otr)$/i.test(f.name)){ const r=new FileReader(); r.onload=()=>{try{loadProject(JSON.parse(r.result));}catch{}}; r.readAsText(f); } });
-window.addEventListener('beforeunload',e=>{ if(state.dirty&&!state.saveActive){ e.preventDefault(); e.returnValue=''; } });
 
 let toastEl;
 function flash(msg){ if(!toastEl){ toastEl=document.createElement('div'); toastEl.style.cssText='position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:9px 16px;border-radius:10px;font-size:.85rem;z-index:300;box-shadow:var(--shadow);max-width:90%;text-align:center'; document.body.appendChild(toastEl); }
@@ -1140,9 +1101,6 @@ function flash(msg){ if(!toastEl){ toastEl=document.createElement('div'); toastE
     state.workSeconds=parseFloat(localStorage.getItem('rescribe_work')||'0')||0;
   }catch(e){ console.warn('restore',e); }
   applyFont(); fillCtxInputs(); applyTheme(); applyI18n(); applySpeed();
-  if(!HAS_FS && !HAS_DIR) $('connectFileBtn').title='Chrome/Edge required — use “Export”';
-  else if(HAS_DIR) idbGet('dir').then(async h=>{ if(!h) return; state.dirHandle=h; state.saveFileName=localStorage.getItem('rescribe_savename')||null; updateSaveBtn();
-    try{ if(state.saveFileName && await h.queryPermission({mode:'readwrite'})==='granted'){ startAutosaveTimer(); markSaveConnected(); } }catch(e){} }).catch(()=>{});
 })();
 
 if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
