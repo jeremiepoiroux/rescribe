@@ -208,6 +208,9 @@ select.mini { font-family: inherit; font-size: .78rem; padding: 4px 6px; border-
 .font-ctl { display: flex; gap: 3px; }
 .imported-name { font-size: .78rem; color: var(--faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px; }
 .save-state { font-size: .76rem; color: var(--faint); display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+#saveState { width: 152px; overflow: hidden; flex: 0 0 auto; }
+#saveState #saveText { overflow: hidden; text-overflow: ellipsis; }
+#wordCount { width: 64px; overflow: hidden; text-overflow: ellipsis; flex: 0 0 auto; }
 .save-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--faint); }
 .save-dot.saved { background: #0d9488; } .save-dot.dirty { background: #ea580c; }
 .dd { position: relative; }
@@ -357,7 +360,7 @@ select.mini { font-family: inherit; font-size: .78rem; padding: 4px 6px; border-
      </div>
    </div>
    <span class="imported-name" id="importedName"></span>
-   <div class="save-state"><span class="save-dot" id="saveDot"></span><span id="saveText">—</span></div>
+   <div class="save-state" id="saveState"><span class="save-dot" id="saveDot"></span><span id="saveText">—</span></div>
    <span class="save-state" id="wordCount"></span>
    <div class="spacer"></div>
    <div class="font-ctl"><button class="icon-btn" id="fontDown" data-i18n-title="fontSmaller">A−</button><button class="icon-btn" id="fontUp" data-i18n-title="fontLarger">A+</button></div>
@@ -429,7 +432,7 @@ select.mini { font-family: inherit; font-size: .78rem; padding: 4px 6px; border-
 
 <script>
 'use strict';
-const VERSION = '1.3.7';
+const VERSION = '1.3.8';
 const BUILD = '2026-07-26';
 const REPO_URL = 'https://github.com/jeremiepoiroux/rescribe';
 

@@ -79,6 +79,9 @@ The service worker is **network-first for the app shell**, so a redeploy is pick
 
 ## Changelog
 
+### v1.3.8
+- Fixed the bottom bar jumping: the save indicator and word count now have reserved fixed widths, so their changing text no longer reflows/wraps the footer while typing.
+
 ### v1.3.7
 - **Simplified, reliable saving.** Removed the fragile "continuous folder save" (it re-asked for folder access after every reload and could write into the previous interview's file). Now: always-on `localStorage` autosave + a manual **Save .json** button (⌘S). On the first save you pick the location; subsequent saves and ⌘S rewrite the same file for the session. `Export → Project` still downloads a copy.
 
