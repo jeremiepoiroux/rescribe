@@ -416,6 +416,7 @@ select.mini { font-family: inherit; font-size: .78rem; padding: 4px 6px; border-
     <p class="sub" style="margin:14px 0 6px;color:var(--text);font-weight:500"><span data-i18n="stats"></span> <span class="hint" style="font-weight:400;color:var(--faint)" data-i18n="statsHint"></span></p>
     <div id="doneStats"></div>
     <div id="doneWork" style="font-size:.9rem;margin-top:8px"></div>
+    <div id="doneMod" style="font-size:.9rem;margin-top:4px"></div>
     <p class="sub" style="margin:18px 0 8px;color:var(--text);font-weight:500" data-i18n="doneExport"></p>
     <div style="display:flex;gap:8px;flex-wrap:wrap">
       <button class="btn" data-export="txt">TXT</button>
@@ -432,7 +433,7 @@ select.mini { font-family: inherit; font-size: .78rem; padding: 4px 6px; border-
 
 <script>
 'use strict';
-const VERSION = '1.3.8';
+const VERSION = '1.3.9';
 const BUILD = '2026-07-26';
 const REPO_URL = 'https://github.com/jeremiepoiroux/rescribe';
 
@@ -475,7 +476,7 @@ const I18N = {
     dropHere:"Dépose ton fichier audio/vidéo",
     saveNudge:"Sauvegarde sur disque en pause — choisis un dossier pour tout enregistrer automatiquement (le travail reste dans le navigateur en attendant).", saveNudgeConfig:"Configurer", saveNudgeIgnore:"Ignorer",
     saveHelp:"Sauvegarde locale automatique dans le navigateur (restaurée au rechargement). Pour un fichier durable ou partageable, clique « Enregistrer .json » (ou ⌘S) quand tu veux : au premier enregistrement tu choisis l'emplacement, puis ⌘S réécrit le même fichier. « Exporter → Projet » télécharge une copie.",
-    words:"Nombre de mots", wordsShort:"mots",
+    words:"Nombre de mots", wordsShort:"mots", textModified:"Texte modifié",
     helpTitle:"À propos et raccourcis",
     about:"Rescribe est un éditeur local pour reprendre les transcriptions d'entretiens générées par IA. Inspiré d'oTranscribe et repensé pour la relecture : réécoute de l'audio et correction du texte, avec des timecodes cliquables qui attribuent chaque prise de parole à un interlocuteur, un en-tête de contexte réutilisable, et une sauvegarde locale + sur disque. Tout reste dans le navigateur — rien n'est envoyé.",
     repoLink:"Code source et journal des améliorations sur GitHub ↗",
@@ -525,7 +526,7 @@ const I18N = {
     dropHere:"Drop your audio/video file",
     saveNudge:"Disk save paused — pick a folder to save everything automatically (work stays in the browser meanwhile).", saveNudgeConfig:"Set up", saveNudgeIgnore:"Dismiss",
     saveHelp:"Automatic local save in the browser (restored on reload). For a durable or shareable file, click “Save .json” (or ⌘S) whenever you want: on the first save you pick the location, then ⌘S rewrites the same file. “Export → Project” downloads a copy.",
-    words:"Word count", wordsShort:"words",
+    words:"Word count", wordsShort:"words", textModified:"Text edited",
     helpTitle:"About & shortcuts",
     about:"Rescribe is a local editor for revisiting AI-generated interview transcripts. Inspired by oTranscribe and rebuilt for the second pass: replay the audio and fix the text, with clickable timecodes that attribute each turn to a speaker, a reusable context header, and local + on-disk saving. Everything stays in the browser — nothing is uploaded.",
     repoLink:"Source code and changelog on GitHub ↗",
@@ -572,7 +573,7 @@ const LS = { html:'rescribe_html', file:'rescribe_file', speakers:'rescribe_spea
 const SPK_COLORS = ['#6366f1','#0d9488','#db2777','#ea580c','#0891b2','#65a30d','#9333ea','#dc2626'];
 function todayISO(){ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
 function defaultMeta(){ return { interviewTitle:'', studyTitle:'', mode:'', date:todayISO(), transcribedBy:'', custom:[] }; }
-const state = { player:null, fileName:'', mediaName:'', importedName:'', speakers:[], dirty:false, fileHandle:null, mediaURL:null, speed:1, workSeconds:0,
+const state = { player:null, fileName:'', mediaName:'', importedName:'', speakers:[], dirty:false, fileHandle:null, mediaURL:null, speed:1, workSeconds:0, baseline:'',
   meta:defaultMeta(), settings:{ step:5, rewindOnPause:1, autosaveMin:2, fontSize:17 } };
 const $ = id => document.getElementById(id);
 const editor = $('editor');
@@ -692,6 +693,7 @@ editor.addEventListener('paste', e => {
     text.split(/\r?\n/).forEach((line, i) => { if(i) frag.appendChild(document.createElement('br')); frag.appendChild(document.createTextNode(line)); }); }
   const range = getRange(); range.deleteContents(); range.insertNode(frag); range.collapse(false);
   const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range); onEditorChanged();
+  if(!state.baseline){ const pt=cd.getData('text/plain')||''; if((pt.match(/\S+/g)||[]).length>=30) setTimeout(captureBaseline,0); }
 });
 function cleanPastedFrag(root){
   const frag=document.createDocumentFragment();
@@ -824,7 +826,15 @@ function statsHtml(){ const totals=computeStats(); const ids=Object.keys(totals)
     return `<div class="stat-row"><span class="dot" style="background:${col}"></span><span class="stat-nm" style="color:${col}">${escapeHtml(name)}</span><span class="stat-bar"><span style="width:${pct}%;background:${col}"></span></span><span class="stat-val">${fmt(sec)} · ${pct}%</span></div>`;
   }).join('');
 }
-function wordCount(){ const c=editor.cloneNode(true); c.querySelectorAll('.turn,.tc,.pause-mark').forEach(e=>e.remove()); const txt=(c.innerText||'').replace(/\[[^\]]*\]/g,' ').trim(); return txt?(txt.match(/\S+/g)||[]).length:0; }
+function cleanedText(){ const c=editor.cloneNode(true); c.querySelectorAll('.turn,.tc,.pause-mark').forEach(e=>e.remove()); return (c.innerText||'').replace(/\[[^\]]*\]/g,' '); }
+function wordCount(){ const txt=cleanedText().trim(); return txt?(txt.match(/\S+/g)||[]).length:0; }
+function normWords(txt){ return (txt||'').toLowerCase().match(/[\p{L}\p{N}’'\-]+/gu) || []; }
+function pctModified(){ if(!state.baseline) return null; const a=normWords(state.baseline); if(!a.length) return null; const b=normWords(cleanedText());
+  const ca={}; a.forEach(w=>ca[w]=(ca[w]||0)+1); const cb={}; b.forEach(w=>cb[w]=(cb[w]||0)+1);
+  let common=0; for(const w in ca){ if(cb[w]) common+=Math.min(ca[w],cb[w]); }
+  const denom=a.length+b.length; return denom? Math.min(100, Math.max(0, Math.round((1-2*common/denom)*100))) : 0; }
+function modText(){ const p=pctModified(); return p==null? '' : t('textModified')+' : ~'+p+'%'; }
+function captureBaseline(){ if(!state.baseline){ const txt=cleanedText().trim(); if(txt){ state.baseline=txt; persistMeta(); } } }
 function renderWordCount(){ const el=$('wordCount'); if(el){ const n=wordCount(); el.textContent = n? n+' '+t('wordsShort') : ''; } }
 
 /* ============================ Contexte + modèles ============================ */
@@ -873,7 +883,7 @@ function workText(){ const w=Math.round(state.workSeconds||0); let s=t('workTime
   if(pos>0){ s+=' · ~'+(state.workSeconds/pos).toFixed(1)+'× '+t('workRatioSuffix')+' ('+fmt(pos)+(d?' '+t('workOf')+' '+fmt(d):'')+')'; } else s+=' · '+t('workNoData');
   const n=wordCount(); if(n) s+=' · '+n+' '+t('wordsShort');
   return s; }
-function openDone(){ $('doneStats').innerHTML=statsHtml(); $('doneWork').textContent=workText(); $('doneModal').classList.add('show'); }
+function openDone(){ $('doneStats').innerHTML=statsHtml(); $('doneWork').textContent=workText(); $('doneMod').textContent=modText(); $('doneModal').classList.add('show'); }
 function togglePlaceholder(){ const empty = editor.children.length===0 && (editor.textContent||'').trim()===''; $('editorPh').classList.toggle('hide', !empty); }
 let saveDebounce=null;
 function scheduleSave(){ clearTimeout(saveDebounce); saveDebounce=setTimeout(()=>{
@@ -883,10 +893,10 @@ function scheduleSave(){ clearTimeout(saveDebounce); saveDebounce=setTimeout(()=
 function markDirty(){ state.dirty=true; $('saveDot').className='save-dot dirty'; $('saveText').textContent=t('modifying'); scheduleSave(); }
 function onEditorChanged(){ tickWork(); togglePlaceholder(); countPlaceholders(); renderWordCount(); markDirty(); }
 function persistMeta(){ localStorage.setItem(LS.file,state.fileName); localStorage.setItem(LS.speakers,JSON.stringify(state.speakers));
-  localStorage.setItem(LS.settings,JSON.stringify(state.settings)); localStorage.setItem(LS.meta,JSON.stringify(state.meta)); localStorage.setItem('rescribe_work', String(Math.round(state.workSeconds||0))); }
-function serializeProject(){ return { format:'rescribe', version:VERSION, savedAt:new Date().toISOString(), fileName:state.fileName, importedName:state.importedName, work:Math.round(state.workSeconds||0), meta:state.meta, speakers:state.speakers, settings:state.settings, html:editor.innerHTML }; }
+  localStorage.setItem(LS.settings,JSON.stringify(state.settings)); localStorage.setItem(LS.meta,JSON.stringify(state.meta)); localStorage.setItem('rescribe_work', String(Math.round(state.workSeconds||0))); localStorage.setItem('rescribe_baseline', state.baseline||''); }
+function serializeProject(){ return { format:'rescribe', version:VERSION, savedAt:new Date().toISOString(), fileName:state.fileName, importedName:state.importedName, work:Math.round(state.workSeconds||0), baseline:state.baseline, meta:state.meta, speakers:state.speakers, settings:state.settings, html:editor.innerHTML }; }
 function loadProject(data){ if(data.html!=null){ editor.innerHTML=data.html; rebindAfterLoad(); } state.speakers=data.speakers||[];
-  state.fileName=data.fileName||''; state.importedName=data.importedName||''; state.workSeconds=data.work||0; renderFooterName();
+  state.fileName=data.fileName||''; state.importedName=data.importedName||''; state.workSeconds=data.work||0; state.baseline=data.baseline||''; renderFooterName();
   if(data.meta){ state.meta=Object.assign(defaultMeta(), data.meta); if(!state.meta.custom) state.meta.custom=[]; if(!state.meta.date) state.meta.date=todayISO(); }
   if(data.settings) state.settings=Object.assign(state.settings,data.settings);
   $('stepSel').value=state.settings.step; $('rwSel').value=state.settings.rewindOnPause; applyFont(); fillCtxInputs(); renderCustomFields();
@@ -923,6 +933,7 @@ function buildHeaderLines(){ const L=[], m=state.meta;
   if(ids.length){ const sum=ids.reduce((a,k)=>a+totals[k],0)||1; ids.sort((a,b)=>totals[b]-totals[a]);
     L.push(t('stats')+' : '+ids.map(id=>{ const s=state.speakers.find(x=>x.id===id); return (s?s.name:'?')+' '+fmt(totals[id])+' ('+Math.round(totals[id]/sum*100)+'%)'; }).join(', ')); }
   if(state.workSeconds>0){ let wl=t('workTime')+' : '+fmt(Math.round(state.workSeconds)); const pos=transcribedPos(); if(pos>0) wl+=' (~'+(state.workSeconds/pos).toFixed(1)+'× '+t('workRatioSuffix')+')'; L.push(wl); }
+  { const mp=pctModified(); if(mp!=null) L.push(t('textModified')+' : ~'+mp+'%'); }
   { const n=wordCount(); if(n) L.push(t('words')+' : '+n); }
   return L; }
 function turnLetter(el){ const id=el.dataset.spk; if(!id) return ''; const s=state.speakers.find(x=>x.id===id); return (s&&s.interviewer)?t('tagI'):''; }
@@ -967,8 +978,8 @@ function importText(kind){ const inp=$('textInput'); inp.accept=IMPORT_ACCEPT[ki
     const reader=new FileReader();
     reader.onload=()=>{ const content=reader.result;
       if(kind==='project'){ try{ loadProject(JSON.parse(content)); flash(t('projImported')); }catch(e){ flash(t('projInvalid')); } }
-      else if(kind==='html'){ appendEditorHtml(content); flash(t('textImported')); }
-      else { setEditorText(content); flash(t('textImported')); } };
+      else if(kind==='html'){ appendEditorHtml(content); captureBaseline(); flash(t('textImported')); }
+      else { setEditorText(content); captureBaseline(); flash(t('textImported')); } };
     reader.readAsText(file); };
   inp.click(); }
 async function importOffice(file){ const name=file.name.toLowerCase();
@@ -976,7 +987,7 @@ async function importOffice(file){ const name=file.name.toLowerCase();
     if(name.endsWith('.docx')) text=officeXmlToText(await zipEntryText(file,'word/document.xml'), /<w:tab\/>/g, /<\/w:p>/g);
     else if(name.endsWith('.odt')) text=officeXmlToText(await zipEntryText(file,'content.xml'), /<text:tab\/>/g, /<\/text:(?:p|h)>/g);
     else { flash(t('docUnsupported')); return; }
-    setEditorText(text); flash(t('textImported'));
+    setEditorText(text); captureBaseline(); flash(t('textImported'));
   }catch(e){ console.warn(e); flash(t('docError')); } }
 function officeXmlToText(xml, tabRe, paraRe){ return xml.replace(tabRe,'\t').replace(paraRe,'\n').replace(/<[^>]+>/g,'')
   .replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;|&apos;/g,"'")
@@ -1004,9 +1015,9 @@ function rebindAfterLoad(){ editor.querySelectorAll('.tc, .turn, .pause-mark').f
 /* ============================ Reset ============================ */
 function resetAll(){ if(!confirm(t('resetConfirm'))) return;
   detachPlayer(); if(state.mediaURL) URL.revokeObjectURL(state.mediaURL); state.mediaURL=null; state.player=null; state.fileHandle=null;
-  state.speakers=[]; state.fileName=''; state.mediaName=''; state.importedName=''; state.meta=defaultMeta(); state.dirty=false; state.workSeconds=0; workLastTick=Date.now(); pauseEl=null;
+  state.speakers=[]; state.fileName=''; state.mediaName=''; state.importedName=''; state.meta=defaultMeta(); state.dirty=false; state.workSeconds=0; state.baseline=''; workLastTick=Date.now(); pauseEl=null;
   editor.innerHTML='';
-  [LS.html,LS.meta,LS.speakers,LS.file,'rescribe_work'].forEach(k=>localStorage.removeItem(k));
+  [LS.html,LS.meta,LS.speakers,LS.file,'rescribe_work','rescribe_baseline'].forEach(k=>localStorage.removeItem(k));
   renderWordCount(); renderFooterName();
   enableTransport(false); $('durTime').textContent='0:00'; $('curTime').textContent='0:00'; $('pctTime').textContent='0%'; $('fill').style.width='0'; $('head').style.left='0';
   [0,1,2,3,4].forEach(i=>$('q'+i).textContent=(i===0||i===4)?'0:00':'·'); $('videoToggle').style.display='none';
@@ -1102,6 +1113,7 @@ function flash(msg){ if(!toastEl){ toastEl=document.createElement('div'); toastE
     const html=localStorage.getItem(LS.html); if(html){ editor.innerHTML=html; rebindAfterLoad(); }
     state.fileName=localStorage.getItem(LS.file)||'';
     state.workSeconds=parseFloat(localStorage.getItem('rescribe_work')||'0')||0;
+    state.baseline=localStorage.getItem('rescribe_baseline')||'';
   }catch(e){ console.warn('restore',e); }
   applyFont(); fillCtxInputs(); applyTheme(); applyI18n(); applySpeed();
 })();

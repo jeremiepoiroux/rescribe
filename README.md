@@ -79,6 +79,9 @@ The service worker is **network-first for the app shell**, so a redeploy is pick
 
 ## Changelog
 
+### v1.3.9
+- **"Text edited ~X%"** in the Finish window and export header. A baseline of the raw transcript is captured automatically when you first import or paste it; the percentage compares the cleaned text to that baseline (word-level, ignoring timecodes/speaker labels/annotations). It's an estimate, reset with New transcription.
+
 ### v1.3.8
 - Fixed the bottom bar jumping: the save indicator and word count now have reserved fixed widths, so their changing text no longer reflows/wraps the footer while typing.
 
