@@ -22,7 +22,7 @@ Deployable to GitHub Pages (or any static host) and installable as an offline PW
 - **Adjustable body text size** (A− / A+) for long sessions.
 
 ### Context & reuse
-- **Context header** (required before exporting document files): interview title (also the export filename) and study title, a date picker (defaults to today), a Video call / In person switch, transcribed-by, plus any number of **custom free fields**. Speakers and recording duration are added automatically. It becomes the header of every exported document.
+- **Context header** (required before exporting document files): interview title (also the export filename) and study title, a date picker (defaults to today), a Video call / In person switch, a **language** selector (French / English / German, or a free "Other" value), transcribed-by, plus any number of **custom free fields**. Speakers and recording duration are added automatically. It becomes the header of every exported document.
 - **Context templates**: save the current context + speakers under a name and reapply it to the next transcript in one click.
 
 ### Saving
@@ -55,8 +55,18 @@ Anything the browser can decode: `.mp3`, `.wav`, `.m4a`, `.aac`, `.ogg`, `.opus`
 - `.html` — HTML content (turns/timecodes preserved if it came from a Rescribe export).
 
 ### Exports
-- **Project** `.rescribe.json` — re-importable, keeps everything (no required context).
+- **Project** `.rescribe.json` — re-importable, keeps everything (no required context). Now also embeds a `corpus` block (see below) under the `corpus` key, alongside the existing fields; the top-level `format` stays `"rescribe"`.
 - **Text** `.txt`, **Markdown** `.md`, **HTML** `.html`, **PDF** (via the browser print dialog) — document outputs, prefixed with the context header (which now also lists talk-time per speaker and the working-time ratio). These require the context to be filled (title, date, transcribed-by).
+- **Corpus (analysis)** `.corpus.json` — the standalone interchange document (see below). Also requires the context to be filled.
+
+### Corpus export (for Elide)
+
+Rescribe is the first stage of a **Rescribe → Elide → analysis** chain. It can emit a document conforming to the shared [`corpus.schema.json`](../elide/corpus-schema/corpus.schema.json) so the next tool imports it without re-parsing the transcript HTML.
+
+- One **segment per speaker turn**: `{ id, speakerId, t (seconds), text, textHash }`. `text` is the turn's content with whitespace normalized; `textHash` is a SHA-256 (first 16 hex chars, where the browser exposes `crypto.subtle`).
+- **Stable ids**: each turn carries a `data-sid` (`seg_0001`, `seg_0002`, …) assigned once and never renumbered — a merged/split/pasted turn gets a new id. The **document id** (`d_…`) is generated once and preserved across saves and re-imports. Turns from pre-1.4 projects are migrated (numbered in document order) on first open.
+- `kind: "interview"`, `sensitivity: "raw"` (contains real identities), `review.status: "none"`. Speakers map to `role: interviewer | interviewee` with the real name as `label`. The context goes to `meta`; `lang` is `fr`/`en`/`de` (a free "Other" value is kept in `meta.langOther` instead, so the document stays schema-valid). A `provenance` entry records `{ tool: "rescribe", version, at }`.
+- The identical block is embedded under `corpus` in every `.rescribe.json`; the standalone `.corpus.json` is the bare document (handy for tests). Everything stays on the machine — anonymization happens later, in Elide, before any analysis tool sees the text.
 
 ## Run it locally
 
@@ -78,6 +88,10 @@ Upload the files to a repo (web UI or git), then *Settings → Pages → Branch 
 The service worker is **network-first for the app shell**, so a redeploy is picked up automatically when online — no hard-refresh or cache-version bump needed.
 
 ## Changelog
+
+### v1.4.0
+- **Corpus export for Elide.** New **Corpus (analysis)** export (`.corpus.json`) conforming to the shared `corpus.schema.json`, and the same `corpus` block is now embedded in every `.rescribe.json` (`format` stays `"rescribe"`). One segment per turn with **stable segment ids** (`seg_0001…`, carried as `data-sid`) and a **stable document id** (`d_…`), both assigned once and preserved across saves/re-imports; pre-1.4 projects are migrated on open. Segment text matches Elide's own parser; SHA-256 text hashes included. Nothing leaves the machine.
+- **Language field** in the context header: French / English / German, or a free "Other" value (stored in `meta.langOther`). Feeds the corpus `lang`.
 
 ### v1.3.9
 - **"Text edited ~X%"** in the Finish window and export header. A baseline of the raw transcript is captured automatically when you first import or paste it; the percentage compares the cleaned text to that baseline (word-level, ignoring timecodes/speaker labels/annotations). It's an estimate, reset with New transcription.

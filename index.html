@@ -312,6 +312,9 @@ select.mini { font-family: inherit; font-size: .78rem; padding: 4px 6px; border-
         <label><span data-i18n="mode"></span>
           <select id="mMode"><option value="" data-i18n="modeNone"></option><option value="visio" data-i18n="modeVisio"></option><option value="presentiel" data-i18n="modePresentiel"></option></select></label>
         <label><span><span data-i18n="transcribedBy"></span><span class="req">*</span></span><input type="text" id="mBy"></label>
+        <label><span data-i18n="langLabel"></span>
+          <select id="mLang"><option value="" data-i18n="langNone"></option><option value="fr" data-i18n="langFr"></option><option value="en" data-i18n="langEn"></option><option value="de" data-i18n="langDe"></option><option value="other" data-i18n="langOther"></option></select>
+          <input type="text" id="mLangOther" data-i18n-ph="langOtherPh" style="display:none;margin-top:6px"></label>
       </div>
       <div class="ctx-custom" id="ctxCustom"></div>
       <div style="margin-top:8px"><button class="btn small" id="ctxAddField">+ <span data-i18n="addField"></span></button></div>
@@ -376,6 +379,7 @@ select.mini { font-family: inherit; font-size: .78rem; padding: 4px 6px; border-
        <button class="dd-item" data-export="md"><span data-i18n="markdownFile"></span> <small>.md</small></button>
        <button class="dd-item" data-export="html"><span data-i18n="htmlFile"></span> <small>.html</small></button>
        <button class="dd-item" data-export="pdf"><span data-i18n="pdfFile"></span> <small data-i18n="pdfHint"></small></button>
+       <button class="dd-item" data-export="corpus"><span data-i18n="corpusFile"></span> <small>.corpus.json</small></button>
      </div>
    </div>
  </div>
@@ -423,6 +427,7 @@ select.mini { font-family: inherit; font-size: .78rem; padding: 4px 6px; border-
       <button class="btn" data-export="md">Markdown</button>
       <button class="btn" data-export="html">HTML</button>
       <button class="btn" data-export="pdf">PDF</button>
+      <button class="btn" data-export="corpus"><span data-i18n="corpusFile"></span></button>
       <button class="btn" data-export="otr"><span data-i18n="projectFile"></span></button>
     </div>
     <div style="margin-top:18px;border-top:1px solid var(--border);padding-top:16px">
@@ -433,8 +438,8 @@ select.mini { font-family: inherit; font-size: .78rem; padding: 4px 6px; border-
 
 <script>
 'use strict';
-const VERSION = '1.3.9';
-const BUILD = '2026-07-26';
+const VERSION = '1.4.0';
+const BUILD = '2026-10-02';
 const REPO_URL = 'https://github.com/jeremiepoiroux/rescribe';
 
 /* ============================ i18n ============================ */
@@ -461,6 +466,7 @@ const I18N = {
     context:"Contexte", contextHint:"— obligatoire, apparaît en en-tête des exports",
     interviewTitle:"Titre de l'entretien", studyTitle:"Titre de l'étude", date:"Date de l'entretien", transcribedBy:"Retranscrit par",
     mode:"Format", modeNone:"—", modeVisio:"Visio", modePresentiel:"Présentiel",
+    langLabel:"Langue", langNone:"—", langFr:"Français", langEn:"Anglais", langDe:"Allemand", langOther:"Autre", langOtherPh:"Préciser la langue",
     addField:"Ajouter un champ", fieldLabel:"Intitulé", fieldValue:"Valeur", duration:"Durée",
     autoIncluded:"Ajoutés automatiquement", autoIncludedEmpty:"Les interlocuteurs et la durée seront ajoutés à l'en-tête.",
     templatesLbl:"Modèle :", templatesPlaceholder:"— charger un modèle —", saveTemplate:"Enregistrer", deleteTemplate:"Supprimer le modèle",
@@ -471,7 +477,7 @@ const I18N = {
     reset:"Nouvelle transcription", resetConfirm:"Démarrer une nouvelle retranscription ? Le texte, le contexte et les interlocuteurs actuels seront effacés (les modèles sont conservés).", resetDone:"Nouvelle retranscription",
     importMedia:"Média", importText:"Texte", projectFile:"Projet", textFile:"Texte", officeFile:"Word / OpenDocument",
     mediaLoaded:"Média importé : {0} ({1})", textImported:"Texte importé", docError:"Impossible de lire ce fichier", docUnsupported:"Format .doc non supporté — enregistre-le en .docx",
-    markdownFile:"Markdown", htmlFile:"HTML", pdfFile:"PDF", pdfHint:"(impression)", saveProject:"Enregistrer .json", saveProjectTitle:"Enregistrer le projet dans un fichier .rescribe.json (ré-éditable). La sauvegarde locale reste automatique dans le navigateur.", export:"Exporter", projectReeditable:"Projet (ré-éditable)",
+    markdownFile:"Markdown", htmlFile:"HTML", pdfFile:"PDF", pdfHint:"(impression)", saveProject:"Enregistrer .json", saveProjectTitle:"Enregistrer le projet dans un fichier .rescribe.json (ré-éditable). La sauvegarde locale reste automatique dans le navigateur.", export:"Exporter", projectReeditable:"Projet (ré-éditable)", corpusFile:"Corpus (analyse)", corpusHint:"(pour Elide)",
     finish:"Terminer", doneTitle:"Retranscription terminée", doneSub:"Statistiques et export ci-dessous.", doneExport:"Exporter",
     dropHere:"Dépose ton fichier audio/vidéo",
     saveNudge:"Sauvegarde sur disque en pause — choisis un dossier pour tout enregistrer automatiquement (le travail reste dans le navigateur en attendant).", saveNudgeConfig:"Configurer", saveNudgeIgnore:"Ignorer",
@@ -511,6 +517,7 @@ const I18N = {
     context:"Context", contextHint:"— required, shown in the export header",
     interviewTitle:"Interview title", studyTitle:"Study title", date:"Interview date", transcribedBy:"Transcribed by",
     mode:"Format", modeNone:"—", modeVisio:"Video call", modePresentiel:"In person",
+    langLabel:"Language", langNone:"—", langFr:"French", langEn:"English", langDe:"German", langOther:"Other", langOtherPh:"Specify the language",
     addField:"Add a field", fieldLabel:"Label", fieldValue:"Value", duration:"Duration",
     autoIncluded:"Added automatically", autoIncludedEmpty:"Speakers and duration will be added to the header.",
     templatesLbl:"Template:", templatesPlaceholder:"— load a template —", saveTemplate:"Save", deleteTemplate:"Delete template",
@@ -521,7 +528,7 @@ const I18N = {
     reset:"New transcription", resetConfirm:"Start a new transcription? The current text, context and speakers will be cleared (templates are kept).", resetDone:"New transcription",
     importMedia:"Media", importText:"Text", projectFile:"Project", textFile:"Text", officeFile:"Word / OpenDocument",
     mediaLoaded:"Media loaded: {0} ({1})", textImported:"Text imported", docError:"Couldn't read this file", docUnsupported:"The old .doc format isn't supported — save it as .docx",
-    markdownFile:"Markdown", htmlFile:"HTML", pdfFile:"PDF", pdfHint:"(print)", saveProject:"Save .json", saveProjectTitle:"Save the project to a .rescribe.json file (re-editable). Local autosave in the browser stays on automatically.", export:"Export", projectReeditable:"Project (re-editable)",
+    markdownFile:"Markdown", htmlFile:"HTML", pdfFile:"PDF", pdfHint:"(print)", saveProject:"Save .json", saveProjectTitle:"Save the project to a .rescribe.json file (re-editable). Local autosave in the browser stays on automatically.", export:"Export", projectReeditable:"Project (re-editable)", corpusFile:"Corpus (analysis)", corpusHint:"(for Elide)",
     finish:"Finish", doneTitle:"Transcription finished", doneSub:"Statistics and export below.", doneExport:"Export",
     dropHere:"Drop your audio/video file",
     saveNudge:"Disk save paused — pick a folder to save everything automatically (work stays in the browser meanwhile).", saveNudgeConfig:"Set up", saveNudgeIgnore:"Dismiss",
@@ -572,8 +579,9 @@ function toggleTheme(){ localStorage.setItem('rescribe_theme', effectiveTheme()=
 const LS = { html:'rescribe_html', file:'rescribe_file', speakers:'rescribe_speakers', settings:'rescribe_settings', meta:'rescribe_meta', templates:'rescribe_templates' };
 const SPK_COLORS = ['#6366f1','#0d9488','#db2777','#ea580c','#0891b2','#65a30d','#9333ea','#dc2626'];
 function todayISO(){ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
-function defaultMeta(){ return { interviewTitle:'', studyTitle:'', mode:'', date:todayISO(), transcribedBy:'', custom:[] }; }
+function defaultMeta(){ return { interviewTitle:'', studyTitle:'', mode:'', date:todayISO(), transcribedBy:'', lang:'', langOther:'', custom:[] }; }
 const state = { player:null, fileName:'', mediaName:'', importedName:'', speakers:[], dirty:false, fileHandle:null, mediaURL:null, speed:1, workSeconds:0, baseline:'',
+  docId:'', docCreated:'', segSeq:0, corpusExt:{},
   meta:defaultMeta(), settings:{ step:5, rewindOnPause:1, autosaveMin:2, fontSize:17 } };
 const $ = id => document.getElementById(id);
 const editor = $('editor');
@@ -654,7 +662,7 @@ function insertNodeAtCaret(node, addSpace){ const range=getRange(); range.delete
   range.collapse(true); const sel=window.getSelection(); sel.removeAllRanges(); sel.addRange(range); onEditorChanged(); }
 function insertText(txt){ insertNodeAtCaret(document.createTextNode(txt), false); }
 function insertTurn(time, spk){
-  const el=document.createElement('span'); el.className='turn'; el.contentEditable='false'; el.dataset.t=time;
+  const el=document.createElement('span'); el.className='turn'; el.contentEditable='false'; el.dataset.t=time; el.dataset.sid=nextSid();
   const tc=document.createElement('span'); tc.className='tc'; tc.textContent=fmt(time); tc.title='→ '+fmt(time); el.appendChild(tc);
   if(spk){ el.dataset.spk=spk.id; const nm=document.createElement('span'); nm.className='turn-spk'; nm.style.color=spk.color; nm.textContent=spk.name; el.appendChild(nm); decorateTurnSpk(el); }
   insertNodeAtCaret(el, true);
@@ -692,7 +700,7 @@ editor.addEventListener('paste', e => {
   else { const text=cd.getData('text/plain'); frag=document.createDocumentFragment();
     text.split(/\r?\n/).forEach((line, i) => { if(i) frag.appendChild(document.createElement('br')); frag.appendChild(document.createTextNode(line)); }); }
   const range = getRange(); range.deleteContents(); range.insertNode(frag); range.collapse(false);
-  const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range); onEditorChanged();
+  const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range); ensureSegIds(); onEditorChanged();
   if(!state.baseline){ const pt=cd.getData('text/plain')||''; if((pt.match(/\S+/g)||[]).length>=30) setTimeout(captureBaseline,0); }
 });
 function cleanPastedFrag(root){
@@ -839,7 +847,8 @@ function renderWordCount(){ const el=$('wordCount'); if(el){ const n=wordCount()
 
 /* ============================ Contexte + modèles ============================ */
 function bindCtx(id,key){ const el=$(id); el.addEventListener('input',()=>{ state.meta[key]=el.value; if(el.value.trim()) el.classList.remove('req-empty'); if(key==='interviewTitle'&&!state.fileName) $('fileMeta').textContent=el.value||t('noMedia'); renderCtxAuto(); persistMeta(); markDirty(); }); }
-function fillCtxInputs(){ $('mInterview').value=state.meta.interviewTitle||''; $('mStudy').value=state.meta.studyTitle||''; $('mDate').value=state.meta.date||''; $('mBy').value=state.meta.transcribedBy||''; $('mMode').value=state.meta.mode||''; }
+function fillCtxInputs(){ $('mInterview').value=state.meta.interviewTitle||''; $('mStudy').value=state.meta.studyTitle||''; $('mDate').value=state.meta.date||''; $('mBy').value=state.meta.transcribedBy||''; $('mMode').value=state.meta.mode||'';
+  $('mLang').value=state.meta.lang||''; $('mLangOther').value=state.meta.langOther||''; $('mLangOther').style.display=(state.meta.lang==='other')?'block':'none'; }
 function renderCustomFields(){ const wrap=$('ctxCustom'); wrap.innerHTML=''; (state.meta.custom||[]).forEach((cf,i)=>{
   const row=document.createElement('div'); row.className='ctx-cf';
   row.innerHTML=`<input class="cf-label" type="text" placeholder="${t('fieldLabel')}" value="${escapeHtml(cf.label||'')}"><input class="cf-value" type="text" placeholder="${t('fieldValue')}" value="${escapeHtml(cf.value||'')}"><button aria-label="✕">✕</button>`;
@@ -893,9 +902,56 @@ function scheduleSave(){ clearTimeout(saveDebounce); saveDebounce=setTimeout(()=
 function markDirty(){ state.dirty=true; $('saveDot').className='save-dot dirty'; $('saveText').textContent=t('modifying'); scheduleSave(); }
 function onEditorChanged(){ tickWork(); togglePlaceholder(); countPlaceholders(); renderWordCount(); markDirty(); }
 function persistMeta(){ localStorage.setItem(LS.file,state.fileName); localStorage.setItem(LS.speakers,JSON.stringify(state.speakers));
-  localStorage.setItem(LS.settings,JSON.stringify(state.settings)); localStorage.setItem(LS.meta,JSON.stringify(state.meta)); localStorage.setItem('rescribe_work', String(Math.round(state.workSeconds||0))); localStorage.setItem('rescribe_baseline', state.baseline||''); }
-function serializeProject(){ return { format:'rescribe', version:VERSION, savedAt:new Date().toISOString(), fileName:state.fileName, importedName:state.importedName, work:Math.round(state.workSeconds||0), baseline:state.baseline, meta:state.meta, speakers:state.speakers, settings:state.settings, html:editor.innerHTML }; }
-function loadProject(data){ if(data.html!=null){ editor.innerHTML=data.html; rebindAfterLoad(); } state.speakers=data.speakers||[];
+  localStorage.setItem(LS.settings,JSON.stringify(state.settings)); localStorage.setItem(LS.meta,JSON.stringify(state.meta)); localStorage.setItem('rescribe_work', String(Math.round(state.workSeconds||0))); localStorage.setItem('rescribe_baseline', state.baseline||''); localStorage.setItem('rescribe_docid', state.docId||''); localStorage.setItem('rescribe_doccreated', state.docCreated||''); }
+/* ---- Corpus (schéma partagé Rescribe → Elide, voir elide/corpus-schema/corpus.schema.json) ---- */
+function nextSid(){ state.segSeq=(state.segSeq||0)+1; return 'seg_'+String(state.segSeq).padStart(4,'0'); }
+function ensureSegIds(){
+  let maxN=state.segSeq||0;
+  editor.querySelectorAll('.turn[data-sid]').forEach(el=>{ const m=/^seg_(\d+)$/.exec(el.dataset.sid); if(m){ const n=parseInt(m[1],10); if(n>maxN) maxN=n; } });
+  state.segSeq=maxN;
+  let added=0; editor.querySelectorAll('.turn:not([data-sid])').forEach(el=>{ el.dataset.sid=nextSid(); added++; });
+  if(added) try{ localStorage.setItem(LS.html, editor.innerHTML); }catch(e){}
+}
+function ensureDocId(){ if(!state.docId) state.docId='d_'+Date.now().toString(36)+Math.random().toString(36).slice(2,8); if(!state.docCreated) state.docCreated=new Date().toISOString(); persistMeta(); return state.docId; }
+function corpusLang(){ const l=state.meta.lang; return (l==='fr'||l==='en'||l==='de')?l:undefined; }
+async function sha256hex16(str){ try{ if(!(window.crypto&&crypto.subtle)) return undefined;
+  const buf=await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str||''));
+  return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('').slice(0,16); }catch(e){ return undefined; } }
+function corpusSegmentsRaw(){
+  ensureSegIds();
+  const spkIds=new Set(state.speakers.map(s=>s.id));
+  const turns=[...editor.querySelectorAll('.turn')], out=[];
+  turns.forEach((el,i)=>{ const next=turns[i+1]||null; let text='', node=el.nextSibling;
+    while(node&&node!==next){ text+=node.textContent||''; node=node.nextSibling; }
+    text=text.replace(/\s+/g,' ').trim(); if(!text) return;
+    const spk=el.dataset.spk, tt=parseFloat(el.dataset.t);
+    out.push({ id:el.dataset.sid, speakerId:(spk&&spkIds.has(spk))?spk:null, t:isFinite(tt)?tt:null, text }); });
+  return out;
+}
+async function buildCorpus(){
+  ensureDocId();
+  const segs=corpusSegmentsRaw();
+  for(const s of segs){ const h=await sha256hex16(s.text); if(h) s.textHash=h; }
+  const m=state.meta;
+  const meta={ studyTitle:m.studyTitle||'', interviewTitle:m.interviewTitle||'', date:m.date||'', mode:m.mode||'', transcribedBy:m.transcribedBy||'', custom:(m.custom||[]).map(c=>({label:c.label||'',value:c.value||''})) };
+  if(m.lang==='other' && (m.langOther||'').trim()) meta.langOther=m.langOther.trim();
+  const prov={ tool:'rescribe', version:VERSION, at:new Date().toISOString() };
+  const from=state.fileName||state.importedName||''; if(from) prov.from=from;
+  const doc={ format:'corpus-doc', schemaVersion:'1.0', id:state.docId, kind:'interview', sensitivity:'raw',
+    title:m.interviewTitle||'', createdAt:state.docCreated||new Date().toISOString(),
+    meta, review:{ status:'none' },
+    speakers:state.speakers.map(s=>({ id:s.id, role:s.interviewer?'interviewer':'interviewee', label:s.name||'', color:s.color })),
+    segments:segs, provenance:[prov], ext:state.corpusExt||{} };
+  const lg=corpusLang(); if(lg) doc.lang=lg;
+  return doc;
+}
+function serializeProject(){ return { format:'rescribe', version:VERSION, savedAt:new Date().toISOString(), fileName:state.fileName, importedName:state.importedName, work:Math.round(state.workSeconds||0), baseline:state.baseline, docId:state.docId, docCreated:state.docCreated, meta:state.meta, speakers:state.speakers, settings:state.settings, html:editor.innerHTML }; }
+async function serializeProjectAsync(){ const corpus=await buildCorpus(); const base=serializeProject(); base.corpus=corpus; return base; }
+function loadProject(data){ state.segSeq=0; state.corpusExt={};
+  state.docId=(data.corpus&&data.corpus.id)||data.docId||'';
+  state.docCreated=(data.corpus&&data.corpus.createdAt)||data.docCreated||'';
+  if(data.corpus&&data.corpus.ext) state.corpusExt=data.corpus.ext;
+  if(data.html!=null){ editor.innerHTML=data.html; rebindAfterLoad(); } state.speakers=data.speakers||[];
   state.fileName=data.fileName||''; state.importedName=data.importedName||''; state.workSeconds=data.work||0; state.baseline=data.baseline||''; renderFooterName();
   if(data.meta){ state.meta=Object.assign(defaultMeta(), data.meta); if(!state.meta.custom) state.meta.custom=[]; if(!state.meta.date) state.meta.date=todayISO(); }
   if(data.settings) state.settings=Object.assign(state.settings,data.settings);
@@ -905,7 +961,7 @@ function loadProject(data){ if(data.html!=null){ editor.innerHTML=data.html; reb
 
 const HAS_FS='showSaveFilePicker' in window;
 async function saveProject(){
-  const json=JSON.stringify(serializeProject(),null,2); const name=exportBase()+'.rescribe.json';
+  const json=JSON.stringify(await serializeProjectAsync(),null,2); const name=exportBase()+'.rescribe.json';
   if(HAS_FS){
     try{
       if(!state.fileHandle) state.fileHandle=await window.showSaveFilePicker({ suggestedName:name, startIn:'documents', types:[{description:'Rescribe project',accept:{'application/json':['.json']}}] });
@@ -954,14 +1010,15 @@ function buildHtml(){ const H=buildHeaderLines();
 ${head}<article>${editor.innerHTML}</article>`; }
 function download(filename,text,mime){ const blob=new Blob([text],{type:(mime||'text/plain')+';charset=utf-8'}); const url=URL.createObjectURL(blob);
   const a=document.createElement('a'); a.href=url; a.download=filename; a.click(); setTimeout(()=>URL.revokeObjectURL(url),1000); }
-function doExport(kind){
+async function doExport(kind){
   if(kind!=='otr'){ const miss=missingMeta(); if(miss.length){ $('doneModal').classList.remove('show'); $('ctxPanel').classList.remove('collapsed'); $('ctxCaret').textContent='▾'; flagMissingMeta(); $('ctxPanel').scrollIntoView({block:'center'}); flash(t('fillContext')); return; } }
   const base=exportBase();
   if(kind==='txt') download(base+'.txt',buildPlainText(false),'text/plain');
   if(kind==='md') download(base+'.md',buildPlainText(true),'text/markdown');
   if(kind==='html') download(base+'.html',buildHtml(),'text/html');
   if(kind==='pdf') exportPdf();
-  if(kind==='otr') download(base+'.rescribe.json',JSON.stringify(serializeProject(),null,2),'application/json'); }
+  if(kind==='corpus') download(base+'.corpus.json',JSON.stringify(await buildCorpus(),null,2),'application/json');
+  if(kind==='otr') download(base+'.rescribe.json',JSON.stringify(await serializeProjectAsync(),null,2),'application/json'); }
 function exportPdf(){ const w=window.open('','_blank'); if(!w){ flash(t('pdfBlocked')); return; } w.document.write(buildHtml()); w.document.close(); w.focus(); setTimeout(()=>{ try{ w.print(); }catch(e){} }, 400); }
 
 /* ============================ Import ============================ */
@@ -1010,14 +1067,14 @@ async function zipEntryText(file, entryName){
   else { const ds=new DecompressionStream('deflate-raw'); const stream=new Blob([comp]).stream().pipeThrough(ds); bytes=new Uint8Array(await new Response(stream).arrayBuffer()); }
   return new TextDecoder('utf-8').decode(bytes);
 }
-function rebindAfterLoad(){ editor.querySelectorAll('.tc, .turn, .pause-mark').forEach(el=>el.contentEditable='false'); editor.querySelectorAll('.turn').forEach(decorateTurnSpk); countPlaceholders(); togglePlaceholder(); }
+function rebindAfterLoad(){ editor.querySelectorAll('.tc, .turn, .pause-mark').forEach(el=>el.contentEditable='false'); editor.querySelectorAll('.turn').forEach(decorateTurnSpk); ensureSegIds(); countPlaceholders(); togglePlaceholder(); }
 
 /* ============================ Reset ============================ */
 function resetAll(){ if(!confirm(t('resetConfirm'))) return;
   detachPlayer(); if(state.mediaURL) URL.revokeObjectURL(state.mediaURL); state.mediaURL=null; state.player=null; state.fileHandle=null;
-  state.speakers=[]; state.fileName=''; state.mediaName=''; state.importedName=''; state.meta=defaultMeta(); state.dirty=false; state.workSeconds=0; state.baseline=''; workLastTick=Date.now(); pauseEl=null;
+  state.speakers=[]; state.fileName=''; state.mediaName=''; state.importedName=''; state.meta=defaultMeta(); state.dirty=false; state.workSeconds=0; state.baseline=''; state.docId=''; state.docCreated=''; state.segSeq=0; state.corpusExt={}; workLastTick=Date.now(); pauseEl=null;
   editor.innerHTML='';
-  [LS.html,LS.meta,LS.speakers,LS.file,'rescribe_work','rescribe_baseline'].forEach(k=>localStorage.removeItem(k));
+  [LS.html,LS.meta,LS.speakers,LS.file,'rescribe_work','rescribe_baseline','rescribe_docid','rescribe_doccreated'].forEach(k=>localStorage.removeItem(k));
   renderWordCount(); renderFooterName();
   enableTransport(false); $('durTime').textContent='0:00'; $('curTime').textContent='0:00'; $('pctTime').textContent='0%'; $('fill').style.width='0'; $('head').style.left='0';
   [0,1,2,3,4].forEach(i=>$('q'+i).textContent=(i===0||i===4)?'0:00':'·'); $('videoToggle').style.display='none';
@@ -1067,6 +1124,8 @@ $('spkHead').onclick=()=>{ $('spkPanel').classList.toggle('collapsed'); $('spkCa
 $('ctxHead').onclick=()=>{ $('ctxPanel').classList.toggle('collapsed'); $('ctxCaret').textContent=$('ctxPanel').classList.contains('collapsed')?'▸':'▾'; };
 bindCtx('mInterview','interviewTitle'); bindCtx('mStudy','studyTitle'); bindCtx('mDate','date'); bindCtx('mBy','transcribedBy');
 $('mMode').onchange=()=>{ state.meta.mode=$('mMode').value; persistMeta(); markDirty(); };
+$('mLang').onchange=()=>{ state.meta.lang=$('mLang').value; if(state.meta.lang!=='other') state.meta.langOther=''; $('mLangOther').value=state.meta.langOther; $('mLangOther').style.display=(state.meta.lang==='other')?'block':'none'; persistMeta(); markDirty(); if(state.meta.lang==='other') $('mLangOther').focus(); };
+$('mLangOther').addEventListener('input',()=>{ state.meta.langOther=$('mLangOther').value; persistMeta(); markDirty(); });
 $('ctxAddField').onclick=addCustomField;
 $('tplSave').onclick=saveTemplate; $('tplDelete').onclick=deleteTemplate;
 $('tplSelect').onchange=()=>{ if($('tplSelect').value) applyTemplate($('tplSelect').value); };
@@ -1114,6 +1173,8 @@ function flash(msg){ if(!toastEl){ toastEl=document.createElement('div'); toastE
     state.fileName=localStorage.getItem(LS.file)||'';
     state.workSeconds=parseFloat(localStorage.getItem('rescribe_work')||'0')||0;
     state.baseline=localStorage.getItem('rescribe_baseline')||'';
+    state.docId=localStorage.getItem('rescribe_docid')||'';
+    state.docCreated=localStorage.getItem('rescribe_doccreated')||'';
   }catch(e){ console.warn('restore',e); }
   applyFont(); fillCtxInputs(); applyTheme(); applyI18n(); applySpeed();
 })();
