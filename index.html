@@ -220,6 +220,9 @@ select.mini { font-family: inherit; font-size: .78rem; padding: 4px 6px; border-
 .dd-item { display: flex; align-items: center; gap: 10px; padding: 8px 11px; border-radius: 7px; font-size: .85rem; cursor: pointer; color: var(--text); border: none; background: transparent; width: 100%; text-align: left; }
 .dd-item:hover { background: var(--surf2); }
 .dd-item small { color: var(--faint); margin-left: auto; font-size: .72rem; }
+.dd-item.strong { color: var(--accent); font-weight: 650; }
+.dd-item.strong small { color: var(--accent-border); }
+.dd-sep { height: 1px; background: var(--border); margin: 5px 8px; }
 
 /* Modal */
 .modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 200; align-items: center; justify-content: center; padding: 20px; }
@@ -374,11 +377,13 @@ select.mini { font-family: inherit; font-size: .78rem; padding: 4px 6px; border-
    <div class="dd" id="exportDd">
      <button class="btn primary" id="exportBtn">⤓ <span data-i18n="export"></span> ▾</button>
      <div class="dd-menu up-right">
-       <button class="dd-item" data-export="otr"><span data-i18n="projectReeditable"></span> <small>.rescribe.json</small></button>
+       <button class="dd-item strong" data-export="otr" data-i18n-title="saveProjectTitle"><span data-i18n="projectReeditable"></span> <small>.rescribe.json</small></button>
+       <div class="dd-sep"></div>
        <button class="dd-item" data-export="txt"><span data-i18n="textFile"></span> <small>.txt</small></button>
        <button class="dd-item" data-export="md"><span data-i18n="markdownFile"></span> <small>.md</small></button>
        <button class="dd-item" data-export="html"><span data-i18n="htmlFile"></span> <small>.html</small></button>
        <button class="dd-item" data-export="pdf"><span data-i18n="pdfFile"></span> <small data-i18n="pdfHint"></small></button>
+       <div class="dd-sep"></div>
        <button class="dd-item" data-export="corpus"><span data-i18n="corpusFile"></span> <small>.corpus.json</small></button>
      </div>
    </div>
@@ -422,13 +427,14 @@ select.mini { font-family: inherit; font-size: .78rem; padding: 4px 6px; border-
     <div id="doneWork" style="font-size:.9rem;margin-top:8px"></div>
     <div id="doneMod" style="font-size:.9rem;margin-top:4px"></div>
     <p class="sub" style="margin:18px 0 8px;color:var(--text);font-weight:500" data-i18n="doneExport"></p>
-    <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+      <button class="btn primary" data-export="otr">💾 <span data-i18n="projectReeditable"></span></button>
+      <span style="width:1px;align-self:stretch;background:var(--border);margin:2px 2px"></span>
       <button class="btn" data-export="txt">TXT</button>
       <button class="btn" data-export="md">Markdown</button>
       <button class="btn" data-export="html">HTML</button>
       <button class="btn" data-export="pdf">PDF</button>
       <button class="btn" data-export="corpus"><span data-i18n="corpusFile"></span></button>
-      <button class="btn" data-export="otr"><span data-i18n="projectFile"></span></button>
     </div>
     <div style="margin-top:18px;border-top:1px solid var(--border);padding-top:16px">
       <button class="btn danger" id="doneNew">🗑 <span data-i18n="reset"></span></button>
@@ -439,7 +445,7 @@ select.mini { font-family: inherit; font-size: .78rem; padding: 4px 6px; border-
 <script>
 'use strict';
 const VERSION = '1.4.0';
-const BUILD = '2026-10-02';
+const BUILD = '2026-10-03';
 const REPO_URL = 'https://github.com/jeremiepoiroux/rescribe';
 
 /* ============================ i18n ============================ */

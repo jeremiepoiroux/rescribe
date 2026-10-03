@@ -92,6 +92,7 @@ The service worker is **network-first for the app shell**, so a redeploy is pick
 ### v1.4.0
 - **Corpus export for Elide.** New **Corpus (analysis)** export (`.corpus.json`) conforming to the shared `corpus.schema.json`, and the same `corpus` block is now embedded in every `.rescribe.json` (`format` stays `"rescribe"`). One segment per turn with **stable segment ids** (`seg_0001…`, carried as `data-sid`) and a **stable document id** (`d_…`), both assigned once and preserved across saves/re-imports; pre-1.4 projects are migrated on open. Segment text matches Elide's own parser; SHA-256 text hashes included. Nothing leaves the machine.
 - **Language field** in the context header: French / English / German, or a free "Other" value (stored in `meta.langOther`). Feeds the corpus `lang`.
+- **Export menu reorganized** to highlight the **re-editable Project** file as the primary output (set apart from the txt/md/html/pdf document exports and the corpus handoff). The Finish window makes Project the primary button too.
 
 ### v1.3.9
 - **"Text edited ~X%"** in the Finish window and export header. A baseline of the raw transcript is captured automatically when you first import or paste it; the percentage compares the cleaned text to that baseline (word-level, ignoring timecodes/speaker labels/annotations). It's an estimate, reset with New transcription.
